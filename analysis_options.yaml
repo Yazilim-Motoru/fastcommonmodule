@@ -1,0 +1,25 @@
+# analysis_options.yaml
+
+# include: package:flutter/analysis_options.yaml  # Kaldırıldı, recursive include uyarısı için
+
+analyzer:
+  errors:
+    unused_import: warning
+    dead_code: warning
+    missing_return: error
+    unnecessary_this: warning
+    prefer_final_fields: warning
+    prefer_const_constructors: warning
+    prefer_single_quotes: warning
+
+linter:
+  rules:
+    - avoid_print
+    - always_declare_return_types
+    - annotate_overrides
+    - prefer_typing_uninitialized_variables
+    - public_member_api_docs
+    - sort_constructors_first
+    - sort_pub_dependencies
+    - unnecessary_new
+    - use_key_in_widget_constructors
