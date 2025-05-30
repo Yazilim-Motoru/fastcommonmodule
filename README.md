@@ -1,0 +1,2 @@
+# fastcommonmodule
+FastCommonModule for Flutter
