@@ -48,6 +48,71 @@ import 'package:fast_common_module/fast_common_module.dart';
 ## Contribution
 Pull requests and issues are welcome.
 
+## Usage Example
+
+Here is a basic example of how to use FastCommonModule in your Flutter project:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+void main() async {
+  // Example: Creating a user
+  final user = FastUser(
+    id: '1',
+    username: 'yazilimmotoru',
+    email: 'info@yazilimmotoru.com',
+    roles: [FastRole.admin],
+  );
+  print('User: \\${user.toJson()}');
+
+  // Example: Creating a response
+  final response = FastResponse.success(user);
+  if (response.success) {
+    print('Success: \\${response.data?.username}');
+  }
+
+  // Example: Handling exception
+  try {
+    throw FastException('Something went wrong', code: 'ERR001');
+  } catch (e) {
+    print(e);
+  }
+}
+```
+
+---
+
+## API Reference
+
+### Models
+- **FastUser**: User model with id, username, email, roles, phone, profileImageUrl, extra fields.
+- **FastRole**: Enum for user roles (admin, editor, viewer, guest).
+- **FastPermission**: Enum for static permissions (view, read, edit, delete).
+- **FastDynamicPermission**: Fine-grained, dynamic permission model for UI/action-level control.
+- **FastTenant**: Tenant (organization/customer) model for multi-tenancy.
+- **FastResponse<T>**: Generic response wrapper for all service/repository operations.
+- **FastException**: Custom exception for error handling with code, message, details, path, className, method.
+
+### Services & Interfaces
+- **BaseAuthService**: Abstract authentication service (login, register, logout, isLoggedIn).
+- **FastUserService**: User management service interface.
+- **FastUserPermissionService**: User-permission management interface.
+- **FastUserRepository**: User repository interface.
+- **FastUserMapper**: User model mapping utilities.
+- **BaseRoleService**: Abstract role management service.
+- **FastRolePermissionService**: Role-permission management (static & dynamic permissions).
+- **RolePermissionMapper**: Role-permission mapping utilities.
+- **BasePermissionService**: Abstract permission management service.
+- **FastTenantService**: Tenant management service interface.
+- **BaseRepository**: Generic repository interface for CRUD operations.
+- **FastTokenService**: JWT/token management interface.
+- **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
+- **Helpers**: Utility functions in `utils/helpers.dart`.
+
+### Localization
+- Add your translations to `lib/src/localization/l10n/en.json`, `tr.json`, etc.
+- Use `LocalizationService` to load and access translations.
+
 ---
 
 > Last updated: 2025-05-30
