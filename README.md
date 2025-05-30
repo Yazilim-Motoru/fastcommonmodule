@@ -1,64 +1,53 @@
 # FastCommonModule
 
-FastCommonModule is a Flutter module designed to provide essential services for role permission authentication, base abstract classes, and support for a microservices architecture. This module is intended for use in multiple projects and includes multilingual support.
+A modular, enterprise-ready Flutter common module for microservice architectures, multilingual support, and robust role/permission/user/tenant management.
 
 ## Features
+- **Modular structure:** All models, services, repositories, and mappers are separated by domain.
+- **Role & Permission Management:** Supports both static (enum) and dynamic (database/UI) permissions.
+- **User Management:** Flexible and extensible FastUser model.
+- **Multi-Tenancy:** FastTenant model and services for multi-organization/customer support.
+- **Unified Response Model:** All service/repository operations use FastResponse<T> for standardized success/error/meta handling.
+- **Exception Handling:** FastException for detailed error management.
+- **Multilingual Support:** JSON/ARB-based localization infrastructure.
+- **Token/JWT Service:** Ready-to-extend authentication infrastructure.
+- **Developer Friendly:** All code is documented in English and IDE-friendly.
 
-- **Role Permission Authentication**: Manage user roles and permissions with ease.
-- **Base Abstract Classes**: Provides foundational classes for entities, repositories, and services.
-- **Microservices Architecture**: Facilitates communication and service management in a microservices environment.
-- **Multilingual Support**: Easily localize your application with built-in localization services.
-
-## Installation
-
-To use FastCommonModule in your Flutter project, add the following dependency in your `pubspec.yaml` file:
-
-```yaml
-dependencies:
-  fast_common_module:
-    path: /path/to/FastCommonModule/lib
+## Folder Structure
+```
+lib/
+  fast_common_module.dart
+  src/
+    auth/           # Authentication and token services
+    common/         # Shared models, response, exception, base repository
+    localization/   # Localization files and service
+    permission/     # Permission models, services
+    role/           # Role models, services
+    tenant/         # Tenant models, services
+    user/           # User models, services
+    utils/          # Helper functions
 ```
 
-## Usage
-
-### Role Permission Service
-
-To use the role permission service, import the `role_permission_service.dart` file:
-
+## Quick Start
 ```dart
-import 'package:fast_common_module/src/auth/role_permission_service.dart';
-
-final rolePermissionService = RolePermissionService();
+import 'package:fast_common_module/fast_common_module.dart';
 ```
 
-### Authentication Service
+## Core Models
+- `FastUser`, `FastRole`, `FastPermission`, `FastDynamicPermission`, `FastTenant`, `FastResponse<T>`, `FastException`
 
-For authentication functionalities, import the `auth_service.dart` file:
+## Core Services
+- `BaseAuthService`, `FastUserService`, `FastRolePermissionService`, `FastTenantService`, `FastTokenService`
 
-```dart
-import 'package:fast_common_module/src/auth/auth_service.dart';
+## Development
+- Follow code style and documentation guidelines.
+- Add new models/services in their own domain folders.
+- Run `flutter analyze` after each change to check for issues.
+- Keep this README up to date.
 
-final authService = AuthService();
-```
+## Contribution
+Pull requests and issues are welcome.
 
-### Localization
+---
 
-To implement multilingual support, use the `localization_service.dart`:
-
-```dart
-import 'package:fast_common_module/src/localization/localization_service.dart';
-
-final localizationService = LocalizationService();
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
-
-## Contact
-
-For any inquiries, please contact the maintainer at [your-email@example.com].
+> Last updated: 2025-05-30
