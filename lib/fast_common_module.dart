@@ -24,7 +24,9 @@ export 'src/localization/localization_service.dart';
 
 // Common
 export 'src/common/model/fast_model.dart';
+export 'src/common/model/fast_audit_log.dart';
 export 'src/common/repository/base_repository.dart';
+export 'src/common/service/fast_audit_log_service.dart';
 
 // Utils
 export 'src/utils/helpers.dart';

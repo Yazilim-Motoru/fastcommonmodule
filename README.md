@@ -77,6 +77,16 @@ void main() async {
   } catch (e) {
     print(e);
   }
+
+  // Example: Writing an audit log
+  final log = FastAuditLog(
+    id: 'log-1',
+    userId: 'user-1',
+    action: 'login',
+    timestamp: DateTime.now().toUtc(),
+    meta: {'ip': '127.0.0.1'},
+  );
+  await auditLogService.writeLog(log);
 }
 ```
 
@@ -92,6 +102,7 @@ void main() async {
 - **FastTenant**: Tenant (organization/customer) model for multi-tenancy.
 - **FastResponse<T>**: Generic response wrapper for all service/repository operations.
 - **FastException**: Custom exception for error handling with code, message, details, path, className, method.
+- **FastAuditLog**: Model for tracking user and system actions. Fields: id, userId, action, targetId, targetType, timestamp, meta.
 
 ### Services & Interfaces
 - **BaseAuthService**: Abstract authentication service (login, register, logout, isLoggedIn).
@@ -108,6 +119,7 @@ void main() async {
 - **FastTokenService**: JWT/token management interface.
 - **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
 - **Helpers**: Utility functions in `utils/helpers.dart`.
+- **FastAuditLogService**: Interface for audit log service. Methods: writeLog, getLogs, getLogById.
 
 ### Localization
 - Add your translations to `lib/src/localization/l10n/en.json`, `tr.json`, etc.
