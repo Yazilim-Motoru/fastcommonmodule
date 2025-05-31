@@ -260,6 +260,43 @@ if (userResponse.success) {
 - Use `fromJson` for custom model deserialization.
 - Supports dynamic auth token/header via `getAuthToken` param.
 
+## Notification/Message Service Example
+
+You can use `FastNotification` and `FastNotificationService` for in-app/system/email/SMS notifications:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Example notification model
+final notification = FastNotification(
+  id: 'notif-1',
+  type: FastNotificationType.info,
+  title: 'Welcome',
+  message: 'Welcome to the system!',
+  targetUserId: 'user-1',
+  isRead: false,
+  createdAt: DateTime.now(),
+);
+
+// Example service usage (abstract, implement for your backend)
+class MyNotificationService extends FastNotificationService {
+  @override
+  Future<FastResponse<bool>> send(FastNotification notification) async {
+    // Call your API or notification backend here
+    return FastResponse.success(true);
+  }
+  // ...implement other methods...
+}
+
+// Usage
+final service = MyNotificationService();
+await service.send(notification);
+```
+
+- `FastNotification`: Model for all notification/message types (in-app, email, SMS, push, etc).
+- `FastNotificationService`: Abstract service for sending, listing, marking as read, and deleting notifications.
+- Supports notification type, read/unread, target user, meta, etc.
+
 ---
 
 > Last updated: 2025-05-31
