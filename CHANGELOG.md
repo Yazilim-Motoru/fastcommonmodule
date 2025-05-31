@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+- Minor fixes and improvements for pub.dev compliance.
+- Formatting and lint issues resolved for maximum pub points.
+- Documentation and example updates.
+
 ## 1.0.1
 - Minor improvements and fixes for pub.dev score.
 - Updated dependencies and example file.
