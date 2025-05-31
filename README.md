@@ -188,6 +188,39 @@ void main() async {
 - `FastPage<T>`: Holds paged data and meta (totalCount, pageIndex, pageSize).
 - `FastFilter`: Standardizes pagination, search, and custom filter params for all list endpoints.
 
+## Permission-based UI Example
+
+You can use `FastPermissionBuilder` to show/hide widgets based on user permissions:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Assume you have a currentUser with permissions:
+final currentUser = FastUser(
+  id: '1',
+  username: 'admin',
+  email: 'admin@example.com',
+  roles: [FastRole.admin],
+  permissions: [FastPermission.view, FastPermission.edit],
+);
+
+// In your widget tree:
+FastPermissionBuilder(
+  permissions: [FastPermission.edit],
+  userPermissions: currentUser.permissions,
+  builder: (context) => ElevatedButton(
+    onPressed: () {},
+    child: Text('Edit'),
+  ),
+  noAccessBuilder: (context) => SizedBox.shrink(), // Optional
+)
+```
+
+- `permissions`: List of required permissions for the widget.
+- `userPermissions`: The current user's permissions.
+- `requireAll`: If true, all permissions are required (default: false, any is enough).
+- `noAccessBuilder`: Optional widget if permission check fails (default: empty).
+
 ---
 
-> Last updated: 2025-05-30
+> Last updated: 2025-05-31
