@@ -30,6 +30,7 @@ export 'src/common/repository/base_repository.dart';
 export 'src/common/service/fast_audit_log_service.dart';
 export 'src/common/model/fast_page.dart';
 export 'src/common/model/fast_filter.dart';
+export 'src/common/service/fast_api_client.dart';
 
 // Utils
 export 'src/utils/helpers.dart';
