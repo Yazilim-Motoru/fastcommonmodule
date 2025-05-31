@@ -6,6 +6,7 @@ export 'src/auth/base_auth_service.dart';
 // Permission
 export 'src/permission/service/base_permission_service.dart';
 export 'src/permission/model/fast_permission.dart';
+export 'src/permission/widget/fast_permission_builder.dart';
 
 // Role
 export 'src/role/service/base_role_service.dart';
