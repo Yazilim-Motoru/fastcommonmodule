@@ -51,7 +51,8 @@ class FastFileMeta {
   factory FastFileMeta.fromJson(Map<String, dynamic> json) => FastFileMeta(
         id: json['id'] as String,
         name: json['name'] as String,
-        type: FastFileType.values.firstWhere((e) => e.toString().split('.').last == json['type']),
+        type: FastFileType.values
+            .firstWhere((e) => e.toString().split('.').last == json['type']),
         size: json['size'] as int,
         mimeType: json['mimeType'] as String,
         url: json['url'] as String,
@@ -59,10 +60,13 @@ class FastFileMeta {
         uploadedAt: DateTime.parse(json['uploadedAt'] as String),
         access: json['access'] != null
             ? (json['access'] as List)
-                .map((e) => FastPermission.values.firstWhere((p) => p.toString().split('.').last == e))
+                .map((e) => FastPermission.values
+                    .firstWhere((p) => p.toString().split('.').last == e))
                 .toList()
             : null,
-        meta: json['meta'] != null ? Map<String, dynamic>.from(json['meta']) : null,
+        meta: json['meta'] != null
+            ? Map<String, dynamic>.from(json['meta'])
+            : null,
       );
 
   /// Converts this [FastFileMeta] to JSON.
@@ -75,7 +79,8 @@ class FastFileMeta {
         'url': url,
         'uploadedBy': uploadedBy,
         'uploadedAt': uploadedAt.toIso8601String(),
-        if (access != null) 'access': access!.map((e) => e.toString().split('.').last).toList(),
+        if (access != null)
+          'access': access!.map((e) => e.toString().split('.').last).toList(),
         if (meta != null) 'meta': meta,
       };
 }
