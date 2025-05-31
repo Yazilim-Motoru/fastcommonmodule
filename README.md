@@ -346,6 +346,43 @@ await fileService.upload(bytes: [], name: 'test.txt', mimeType: 'text/plain');
 - `FastFileType`: Enum for file/media types (image, video, document, etc).
 - `access`: List of FastPermission for file-level access control.
 
+## User Activity/Session Management Example
+
+You can use `FastSession` and `FastSessionService` for managing active sessions, last login/activity, and session termination:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Example session model
+final session = FastSession(
+  id: 'sess-1',
+  userId: 'user-1',
+  createdAt: DateTime.now().subtract(Duration(hours: 2)),
+  lastActiveAt: DateTime.now(),
+  deviceInfo: 'Chrome on macOS',
+  ip: '192.168.1.10',
+  isActive: true,
+);
+
+// Example service usage (abstract, implement for your backend)
+class MySessionService extends FastSessionService {
+  @override
+  Future<FastResponse<List<FastSession>>> listUserSessions(String userId) async {
+    // Call your API or session backend here
+    return FastResponse.success([session]);
+  }
+  // ...implement other methods...
+}
+
+// Usage
+final sessionService = MySessionService();
+await sessionService.listUserSessions('user-1');
+```
+
+- `FastSession`: Model for user session/activity (id, userId, createdAt, lastActiveAt, deviceInfo, ip, isActive, meta).
+- `FastSessionService`: Abstract service for listing, getting, terminating, and updating sessions.
+- Oturum sonlandırma, son giriş/aktivite zamanı ve çoklu cihaz desteği için uygundur.
+
 ---
 
 > Last updated: 2025-05-31
