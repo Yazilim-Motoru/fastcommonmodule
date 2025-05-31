@@ -34,6 +34,9 @@ export 'src/common/service/fast_api_client.dart';
 export 'src/common/model/fast_notification.dart';
 export 'src/common/service/fast_notification_service.dart';
 export 'src/common/model/fast_notification_type.dart';
+export 'src/common/model/fast_file_meta.dart';
+export 'src/common/service/fast_file_service.dart';
+export 'src/common/enums/fast_file_type.dart';
 
 // Utils
 export 'src/utils/helpers.dart';
