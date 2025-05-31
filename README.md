@@ -221,6 +221,45 @@ FastPermissionBuilder(
 - `requireAll`: If true, all permissions are required (default: false, any is enough).
 - `noAccessBuilder`: Optional widget if permission check fails (default: empty).
 
+## API Client Example
+
+You can use `FastApiClient` for generic, type-safe REST API calls:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+final api = FastApiClient(baseUrl: 'https://api.example.com');
+
+// GET request
+final usersResponse = await api.get<List<dynamic>>('/users');
+if (usersResponse.success) {
+  print(usersResponse.data);
+}
+
+// POST request with body
+final createResponse = await api.post<Map<String, dynamic>>(
+  '/users',
+  body: {'username': 'test', 'email': 'test@example.com'},
+);
+if (createResponse.success) {
+  print(createResponse.data);
+}
+
+// Custom model mapping
+final userResponse = await api.get<FastUser>(
+  '/users/1',
+  fromJson: (json) => FastUser.fromJson(json),
+);
+if (userResponse.success) {
+  print(userResponse.data?.username);
+}
+```
+
+- Supports GET, POST, PUT, DELETE.
+- Returns `FastResponse<T>` for unified error/success handling.
+- Use `fromJson` for custom model deserialization.
+- Supports dynamic auth token/header via `getAuthToken` param.
+
 ---
 
 > Last updated: 2025-05-31
