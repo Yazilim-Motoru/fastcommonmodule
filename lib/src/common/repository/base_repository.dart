@@ -1,7 +1,7 @@
 import '../model/fast_model.dart';
 import '../model/fast_response.dart';
 
-/// Abstract repository for managing data objects of type [T].
+/// Abstract base class for repositories.
 ///
 /// Implement this class to provide data access logic for your models.
 abstract class BaseRepository<T extends FastModel> {

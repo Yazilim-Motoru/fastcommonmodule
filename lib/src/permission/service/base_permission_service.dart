@@ -1,7 +1,7 @@
 import '../model/fast_permission.dart';
 import '../../common/model/fast_response.dart';
 
-/// Abstract service for handling user permissions.
+/// Abstract base class for permission services.
 ///
 /// Implement this class to provide custom permission logic for your application.
 abstract class BasePermissionService {

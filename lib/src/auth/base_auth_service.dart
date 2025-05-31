@@ -1,7 +1,7 @@
 import '../user/model/fast_user.dart';
 import '../common/model/fast_response.dart';
 
-/// Abstract service for authentication operations.
+/// Abstract base class for authentication services.
 ///
 /// Implement this class to provide custom authentication logic for your application.
 abstract class BaseAuthService {

@@ -1,3 +1,4 @@
+/// The main library file for FastCommonModule.
 library fast_common_module;
 
 // Auth

@@ -1,7 +1,7 @@
 import '../model/fast_role.dart';
 import '../../common/model/fast_response.dart';
 
-/// Abstract service for handling user roles.
+/// Abstract base class for role services.
 ///
 /// Implement this class to provide custom role logic for your application.
 abstract class BaseRoleService {
