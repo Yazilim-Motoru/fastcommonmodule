@@ -1,27 +1,25 @@
-/// FastException is a custom exception class for FastCommonModule.
-///
-/// Use this for all domain-specific errors and to provide consistent error handling.
+/// Custom exception for FastCommonModule operations.
 class FastException implements Exception {
-  /// Error code for programmatic handling (optional).
-  final String? code;
-
-  /// Human-readable error message.
+  /// Error message.
   final String message;
 
-  /// Optional details or stack trace.
+  /// Optional error code.
+  final String? code;
+
+  /// Optional error details.
   final dynamic details;
 
-  /// Optional file path where the exception occurred.
+  /// Optional path where the error occurred.
   final String? path;
 
-  /// Optional class name where the exception occurred.
+  /// Optional class name where the error occurred.
   final String? className;
 
-  /// Optional method name where the exception occurred.
+  /// Optional method name where the error occurred.
   final String? method;
 
-  /// Creates a [FastException] with a message and optional details.
-  FastException(
+  /// Creates a [FastException] instance.
+  const FastException(
     this.message, {
     this.code,
     this.details,
@@ -31,17 +29,6 @@ class FastException implements Exception {
   });
 
   @override
-  String toString() {
-    final buffer = StringBuffer();
-    if (code != null)
-      buffer.write('FastException([32m$code[0m): ');
-    else
-      buffer.write('FastException: ');
-    buffer.write(message);
-    if (className != null) buffer.write(' | class: $className');
-    if (method != null) buffer.write(' | method: $method');
-    if (path != null) buffer.write(' | path: $path');
-    if (details != null) buffer.write(' | details: $details');
-    return buffer.toString();
-  }
+  String toString() =>
+      'FastException(message: $message, code: $code, details: $details, path: $path, className: $className, method: $method)';
 }

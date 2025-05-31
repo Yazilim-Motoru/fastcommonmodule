@@ -25,6 +25,9 @@ class FastDynamicPermission {
 ///
 /// Extend this class and override its methods to implement your own database logic.
 abstract class FastRolePermissionService {
+  /// Creates a [FastRolePermissionService] instance.
+  FastRolePermissionService();
+
   /// Returns all roles in the system.
   Future<FastResponse<List<FastRole>>> getAllRoles();
 

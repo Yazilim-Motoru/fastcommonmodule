@@ -7,18 +7,22 @@ abstract class FastModel {
   /// Unique identifier for the model.
   final String id;
 
-  /// Constructor for [FastModel].
+  /// Creates a [FastModel] instance.
   const FastModel({required this.id});
 
   /// Converts the model to a JSON map.
   Map<String, dynamic> toJson();
 
   /// Creates a model from a JSON map.
+  ///
+  /// Throws [UnimplementedError] if not overridden in a subclass.
   static FastModel fromJson(Map<String, dynamic> json) {
     throw UnimplementedError('fromJson must be implemented in subclasses');
   }
 
   /// Returns a dummy instance of the model with random data.
+  ///
+  /// Throws [UnimplementedError] if not overridden in a subclass.
   static T dummyModel<T extends FastModel>() {
     throw UnimplementedError('dummyModel must be implemented in subclasses');
   }

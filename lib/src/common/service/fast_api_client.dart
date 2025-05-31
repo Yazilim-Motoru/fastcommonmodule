@@ -20,6 +20,7 @@ class FastApiClient {
   /// Optional function to provide auth token/header dynamically.
   final Future<String?> Function()? getAuthToken;
 
+  /// Creates a [FastApiClient] instance.
   FastApiClient({
     required this.baseUrl,
     this.defaultHeaders = const {},

@@ -27,6 +27,7 @@ class FastPermissionBuilder extends StatelessWidget {
   /// The widget to show if permission check fails (optional).
   final WidgetBuilder? noAccessBuilder;
 
+  /// Creates a [FastPermissionBuilder] widget.
   const FastPermissionBuilder({
     Key? key,
     required this.permissions,

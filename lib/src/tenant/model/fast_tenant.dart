@@ -19,12 +19,14 @@ class FastTenant extends FastModel {
     this.extra,
   }) : super(id: id);
 
-  /// Creates a [FastTenant] from a JSON map.
+  /// Creates a [FastTenant] from JSON.
   factory FastTenant.fromJson(Map<String, dynamic> json) => FastTenant(
         id: json['id'] as String,
         name: json['name'] as String,
-        description: json['description'] as String?,
-        extra: json['extra'] as Map<String, dynamic>?,
+        description: json['description'],
+        extra: json['extra'] != null
+            ? Map<String, dynamic>.from(json['extra'])
+            : null,
       );
 
   /// Converts the tenant to a JSON map.
