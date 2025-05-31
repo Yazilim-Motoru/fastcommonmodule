@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+- Further lint and formatting fixes for full pub.dev score.
+- isTCIdentity function and all if blocks updated for Dart style compliance.
+- Minor documentation and code improvements.
+
 ## 1.0.2
 - Minor fixes and improvements for pub.dev compliance.
 - Formatting and lint issues resolved for maximum pub points.
