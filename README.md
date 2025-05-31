@@ -145,6 +145,49 @@ FastValidator.isNotEmpty('hello'); // true
 FastValidator.isUsername('user_01'); // true
 ```
 
+## Pagination & Filtering Example
+
+You can use `FastPage<T>` and `FastFilter` for generic, type-safe pagination and filtering in your list services:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Example: Listing users with pagination and filtering
+Future<FastPage<FastUser>> listUsers(FastFilter filter) async {
+  // This is a mock example. Replace with your repository/service call.
+  final allUsers = [
+    FastUser(id: '1', username: 'alice', email: 'alice@example.com', roles: [FastRole.admin]),
+    FastUser(id: '2', username: 'bob', email: 'bob@example.com', roles: [FastRole.editor]),
+    // ... more users ...
+  ];
+  // Simple filter by query (username contains)
+  final filtered = filter.query == null
+      ? allUsers
+      : allUsers.where((u) => u.username.contains(filter.query!)).toList();
+  final start = filter.pageIndex * filter.pageSize;
+  final end = (start + filter.pageSize).clamp(0, filtered.length);
+  final pageItems = filtered.sublist(start, end);
+  return FastPage<FastUser>(
+    items: pageItems,
+    totalCount: filtered.length,
+    pageIndex: filter.pageIndex,
+    pageSize: filter.pageSize,
+  );
+}
+
+void main() async {
+  final filter = FastFilter(pageIndex: 0, pageSize: 10, query: 'ali');
+  final page = await listUsers(filter);
+  print('Total users: \\${page.totalCount}');
+  for (final user in page.items) {
+    print(user.username);
+  }
+}
+```
+
+- `FastPage<T>`: Holds paged data and meta (totalCount, pageIndex, pageSize).
+- `FastFilter`: Standardizes pagination, search, and custom filter params for all list endpoints.
+
 ---
 
 > Last updated: 2025-05-30
