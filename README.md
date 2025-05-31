@@ -381,7 +381,7 @@ await sessionService.listUserSessions('user-1');
 
 - `FastSession`: Model for user session/activity (id, userId, createdAt, lastActiveAt, deviceInfo, ip, isActive, meta).
 - `FastSessionService`: Abstract service for listing, getting, terminating, and updating sessions.
-- Oturum sonlandırma, son giriş/aktivite zamanı ve çoklu cihaz desteği için uygundur.
+- Suitable for session termination, tracking last login/activity time, and multi-device support.
 
 ## Settings/Config Service Example
 
@@ -415,7 +415,7 @@ await settingsService.getSetting('theme', userId: 'user-1');
 
 - `FastSetting`: Model for dynamic application settings/config (id, value, userId, roleId, tenantId, description, meta).
 - `FastSettingsService`: Abstract service for getting, setting, deleting, and listing settings.
-- Kullanıcı, rol veya tenant bazında özelleştirilebilir ayarlar için uygundur.
+- Suitable for customizable settings per user, role, or tenant.
 
 ---
 
