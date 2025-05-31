@@ -103,6 +103,7 @@ void main() async {
 - **FastResponse<T>**: Generic response wrapper for all service/repository operations.
 - **FastException**: Custom exception for error handling with code, message, details, path, className, method.
 - **FastAuditLog**: Model for tracking user and system actions. Fields: id, userId, action, targetId, targetType, timestamp, meta.
+- **FastFileMeta**: Model for file/media metadata, access permissions (now List<FastPermission>), and extensible meta.
 
 ### Services & Interfaces
 - **BaseAuthService**: Abstract authentication service (login, register, logout, isLoggedIn).
@@ -120,6 +121,7 @@ void main() async {
 - **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
 - **Helpers**: Utility functions in `utils/helpers.dart`.
 - **FastAuditLogService**: Interface for audit log service. Methods: writeLog, getLogs, getLogById.
+- **FastFileService**: Abstract service for upload, download, delete, and file listing.
 
 ### Localization
 - Add your translations to `lib/src/localization/l10n/en.json`, `tr.json`, etc.
@@ -296,6 +298,53 @@ await service.send(notification);
 - `FastNotification`: Model for all notification/message types (in-app, email, SMS, push, etc).
 - `FastNotificationService`: Abstract service for sending, listing, marking as read, and deleting notifications.
 - Supports notification type, read/unread, target user, meta, etc.
+
+## File/Media Management Example
+
+You can use `FastFileMeta` and `FastFileService` for file upload, download, delete, and permission management:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Example file metadata
+final fileMeta = FastFileMeta(
+  id: 'file-1',
+  name: 'document.pdf',
+  type: FastFileType.document,
+  size: 102400,
+  mimeType: 'application/pdf',
+  url: 'https://cdn.example.com/files/document.pdf',
+  uploadedBy: 'user-1',
+  uploadedAt: DateTime.now(),
+  access: [FastPermission.view, FastPermission.edit],
+);
+
+// Example service usage (abstract, implement for your backend)
+class MyFileService extends FastFileService {
+  @override
+  Future<FastResponse<FastFileMeta>> upload({
+    required List<int> bytes,
+    required String name,
+    required String mimeType,
+    FastFileType type = FastFileType.other,
+    List<FastPermission>? access,
+    Map<String, dynamic>? meta,
+  }) async {
+    // Call your API or storage backend here
+    return FastResponse.success(fileMeta);
+  }
+  // ...implement other methods...
+}
+
+// Usage
+final fileService = MyFileService();
+await fileService.upload(bytes: [], name: 'test.txt', mimeType: 'text/plain');
+```
+
+- `FastFileMeta`: Model for file/media metadata, access permissions (now List<FastPermission>), and extensible meta.
+- `FastFileService`: Abstract service for upload, download, delete, and file listing.
+- `FastFileType`: Enum for file/media types (image, video, document, etc).
+- `access`: List of FastPermission for file-level access control.
 
 ---
 
