@@ -30,3 +30,4 @@ export 'src/common/service/fast_audit_log_service.dart';
 
 // Utils
 export 'src/utils/helpers.dart';
+export 'src/utils/fast_validator.dart';

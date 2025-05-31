@@ -125,6 +125,26 @@ void main() async {
 - Add your translations to `lib/src/localization/l10n/en.json`, `tr.json`, etc.
 - Use `LocalizationService` to load and access translations.
 
+## Validation & Form Utilities
+
+### FastValidator
+- Static utility class for common field validation.
+- Methods:
+  - `isEmail(String?)`: Validates email address format.
+  - `isPassword(String?)`: Validates password (min 8 chars, at least 1 letter and 1 number).
+  - `isPhone(String?)`: Validates international phone number format.
+  - `isNotEmpty(String?)`: Checks if a field is not empty.
+  - `isUsername(String?)`: Validates username (alphanumeric, 3-32 chars).
+
+#### Example
+```dart
+FastValidator.isEmail('test@example.com'); // true
+FastValidator.isPassword('abc12345'); // true
+FastValidator.isPhone('+905551112233'); // true
+FastValidator.isNotEmpty('hello'); // true
+FastValidator.isUsername('user_01'); // true
+```
+
 ---
 
 > Last updated: 2025-05-30
