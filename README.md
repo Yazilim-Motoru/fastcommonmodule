@@ -383,6 +383,40 @@ await sessionService.listUserSessions('user-1');
 - `FastSessionService`: Abstract service for listing, getting, terminating, and updating sessions.
 - Oturum sonlandırma, son giriş/aktivite zamanı ve çoklu cihaz desteği için uygundur.
 
+## Settings/Config Service Example
+
+You can use `FastSetting` and `FastSettingsService` for dynamic, user/role/tenant-based application settings:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Example setting model
+final setting = FastSetting(
+  id: 'theme',
+  value: 'dark',
+  userId: 'user-1',
+  description: 'User theme preference',
+);
+
+// Example service usage (abstract, implement for your backend)
+class MySettingsService extends FastSettingsService {
+  @override
+  Future<FastResponse<FastSetting>> getSetting(String id, {String? userId, String? roleId, String? tenantId}) async {
+    // Call your API or config backend here
+    return FastResponse.success(setting);
+  }
+  // ...implement other methods...
+}
+
+// Usage
+final settingsService = MySettingsService();
+await settingsService.getSetting('theme', userId: 'user-1');
+```
+
+- `FastSetting`: Model for dynamic application settings/config (id, value, userId, roleId, tenantId, description, meta).
+- `FastSettingsService`: Abstract service for getting, setting, deleting, and listing settings.
+- Kullanıcı, rol veya tenant bazında özelleştirilebilir ayarlar için uygundur.
+
 ---
 
 > Last updated: 2025-05-31

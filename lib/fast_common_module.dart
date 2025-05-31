@@ -39,6 +39,8 @@ export 'src/common/service/fast_file_service.dart';
 export 'src/common/enums/fast_file_type.dart';
 export 'src/common/model/fast_session.dart';
 export 'src/common/service/fast_session_service.dart';
+export 'src/common/model/fast_setting.dart';
+export 'src/common/service/fast_settings_service.dart';
 
 // Utils
 export 'src/utils/helpers.dart';
