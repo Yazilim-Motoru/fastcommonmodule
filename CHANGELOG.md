@@ -15,6 +15,17 @@
 - **Whitelist/Blacklist Support**: Bypass or permanently block specific identifiers (IP, user ID, API key).
 - **Rate Limiting Statistics**: Detailed performance metrics, violation tracking, and security monitoring.
 - **HTTP Standard Compliance**: RFC-compliant rate limit headers for API responses.
+- **Complete Middleware System**: Added comprehensive middleware system for global error/response handling and request interception.
+- **FastMiddlewareManager**: Priority-based middleware chain execution with request, response, error, and finally hooks.
+- **Enhanced FastApiClient**: Integrated middleware support with automatic middleware chain execution for all HTTP operations.
+- **ErrorHandlingMiddleware**: Global error handling, logging, and response formatting with custom error transformation.
+- **LoggingMiddleware**: Configurable request/response logging with sensitivity controls and detailed debugging options.
+- **RetryMiddleware**: Automatic retry logic with exponential backoff, custom retry conditions, and configurable strategies.
+- **TimeoutMiddleware**: Request timeout handling with method/endpoint-specific configurations and proper error responses.
+- **Custom Middleware Support**: BaseMiddleware interface allows custom middleware implementation for specific domain needs.
+- **Middleware Documentation**: Comprehensive usage examples, API reference, and middleware creation guide in README.md.
+- **Example Integration**: Added complete middleware examples in fast_common_module_example.dart with real-world usage patterns.
+- **Production-Ready**: Error-safe middleware execution with proper exception handling, cleanup logic, and performance optimization.
 - **Enhanced Documentation**: Added comprehensive caching and rate limiting examples with API reference.
 - **Updated Features Section**: Added caching and rate limiting to main features and folder structure.
 - **Improved Documentation Structure**: Features now organized into Architecture & Structure, User & Access Management, Advanced Localization, API & Data Management, and Utilities & Services categories.

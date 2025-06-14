@@ -35,9 +35,6 @@ class FastLocalization {
   /// Language change listeners
   final List<Function(FastLanguage)> _listeners = [];
 
-  /// User preference storage key
-  static const String _preferenceKey = 'fast_localization_language';
-
   /// Initialize localization system
   Future<void> initialize({
     FastLanguage? defaultLanguage,
