@@ -256,11 +256,132 @@ final headers = result.toHttpHeaders();
 - **HTTP Standard Headers**: RFC-compliant rate limit headers for APIs
 - **Auto-Cleanup**: Automatic removal of expired entries and blocks
 
+## Error/Response Middleware System Example
+
+FastCommonModule includes a powerful middleware system for intercepting and handling requests, responses, and errors globally. This provides centralized logging, error handling, retry logic, timeout management, and more.
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Create API client with middleware support
+final apiClient = FastApiClient(baseUrl: 'https://api.example.com');
+
+// Add error handling middleware
+apiClient.addMiddleware(ErrorHandlingMiddleware(
+  includeStackTrace: false,
+  logErrors: true,
+  onErrorLogged: (error, context) {
+    print('Error in $context: ${error.code} - ${error.message}');
+  },
+));
+
+// Add logging middleware for debugging
+apiClient.addMiddleware(LoggingMiddleware(
+  logRequests: true,
+  logResponses: true,
+  logResponseData: false, // Don't log sensitive data
+  logRequestData: false,
+));
+
+// Add timeout middleware with different timeouts per method
+apiClient.addMiddleware(TimeoutMiddleware.create(
+  defaultTimeout: Duration(seconds: 30),
+  getTimeout: Duration(seconds: 10),
+  postTimeout: Duration(seconds: 60),
+  uploadTimeout: Duration(minutes: 5),
+));
+
+// Add retry middleware with exponential backoff
+apiClient.addMiddleware(RetryMiddleware(
+  maxRetries: 3,
+  retryDelay: Duration(milliseconds: 1000),
+  useExponentialBackoff: true,
+  shouldRetry: (error, attemptCount) {
+    // Custom retry logic
+    return attemptCount < 3 && 
+           error.toString().contains('timeout');
+  },
+));
+
+// Use the API client - middleware will be applied automatically
+final response = await apiClient.get<Map<String, dynamic>>('/users');
+```
+
+### Creating Custom Middleware
+
+```dart
+class CustomAuthMiddleware extends BaseMiddleware {
+  final String apiKey;
+  
+  CustomAuthMiddleware(this.apiKey);
+  
+  @override
+  int get priority => 50; // Execute early
+  
+  @override
+  Future<FastResponse<T>?> onRequest<T>(
+    String method,
+    String endpoint,
+    Map<String, dynamic>? data,
+    Map<String, String>? headers,
+  ) async {
+    // Add auth header to all requests
+    final authHeaders = Map<String, String>.from(headers ?? {});
+    authHeaders['X-API-Key'] = apiKey;
+    
+    return null; // Continue with modified headers
+  }
+  
+  @override
+  Future<FastResponse<T>> onResponse<T>(
+    FastResponse<T> response,
+    String method,
+    String endpoint,
+    Map<String, dynamic>? data,
+  ) async {
+    // Log successful API calls
+    if (response.success) {
+      print('✅ $method $endpoint succeeded');
+    }
+    return response;
+  }
+  
+  @override
+  Future<FastResponse<T>> onError<T>(
+    Exception error,
+    String method,
+    String endpoint,
+    Map<String, dynamic>? data,
+  ) async {
+    // Handle auth errors specifically
+    if (error.toString().contains('401')) {
+      return FastResponse<T>.failure(
+        errorCode: 'AUTH_REQUIRED',
+        errorMessage: 'Authentication required',
+      );
+    }
+    throw error; // Re-throw other errors
+  }
+}
+
+// Add custom middleware
+apiClient.addMiddleware(CustomAuthMiddleware('your-api-key'));
+```
+
+### Middleware Features:
+- **Global Error Handling**: Centralized error processing and formatting
+- **Request/Response Logging**: Configurable logging with sensitive data protection
+- **Automatic Retries**: Smart retry logic with exponential backoff
+- **Timeout Management**: Per-method and per-endpoint timeout configuration
+- **Middleware Chain**: Priority-based execution order
+- **Custom Middleware**: Easy to create domain-specific middleware
+- **Error Transformation**: Convert raw exceptions to structured error responses
+
 ---
 
 ## API Reference
 
-### Models
+### Core Models
 - **FastUser**: User model with id, username, email, roles, phone, profileImageUrl, extra fields.
 - **FastRole**: Enum for user roles (admin, editor, viewer, guest).
 - **FastPermission**: Enum for static permissions (view, read, edit, delete).
@@ -270,9 +391,18 @@ final headers = result.toHttpHeaders();
 - **FastException**: Custom exception for error handling with code, message, details, path, className, method.
 - **FastAuditLog**: Model for tracking user and system actions. Fields: id, userId, action, targetId, targetType, timestamp, meta.
 - **FastFileMeta**: Model for file/media metadata, access permissions (now List<FastPermission>), and extensible meta.
+- **FastNotification**: Model for all notification/message types with type, read status, target user, etc.
+- **FastSession**: Model for user session management with device info and security features.
+- **FastSetting**: Model for application settings and configuration management.
+- **FastPage<T>**: Generic pagination model with items, total count, and pagination metadata.
+- **FastFilter**: Generic filtering model with query, pagination, sorting, and custom filters.
+
+### Cache Models
 - **FastCacheItem<T>**: Cache item model with data, expiration, access tracking and metadata.
 - **FastCacheConfig**: Cache configuration with memory/disk limits, TTL, cleanup policies.
 - **FastCacheStatistics**: Cache performance metrics with hit/miss ratios and usage statistics.
+
+### Rate Limiting Models
 - **FastRateLimitConfig**: Rate limiting configuration with algorithms, penalties, whitelist/blacklist.
 - **FastRateLimitEntry**: Rate limiting entry tracking request history and violations for identifiers.
 - **FastRateLimitResult**: Rate limiting check result with allow/block status and retry information.
@@ -280,6 +410,7 @@ final headers = result.toHttpHeaders();
 
 ### Services & Interfaces
 - **BaseAuthService**: Abstract authentication service (login, register, logout, isLoggedIn).
+- **FastTokenService**: JWT/token management interface.
 - **FastUserService**: User management service interface.
 - **FastUserPermissionService**: User-permission management interface.
 - **FastUserRepository**: User repository interface.
@@ -289,385 +420,67 @@ final headers = result.toHttpHeaders();
 - **RolePermissionMapper**: Role-permission mapping utilities.
 - **BasePermissionService**: Abstract permission management service.
 - **FastTenantService**: Tenant management service interface.
-- **BaseRepository**: Generic repository interface for CRUD operations.
-- **FastTokenService**: JWT/token management interface.
-- **BaseCacheService**: Abstract cache service interface.
-- **FastCacheService**: High-performance caching with memory/disk storage, automatic expiration, and statistics.
-- **BaseRateLimitService**: Abstract rate limiting service interface.
-- **FastRateLimitService**: Rate limiting and throttling with multiple algorithms, brute-force protection, and progressive penalties.
-- **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
-- **Helpers**: Utility functions in `utils/helpers.dart`.
+- **FastApiClient**: REST API client with middleware support, auth handling, and comprehensive HTTP methods.
 - **FastAuditLogService**: Interface for audit log service. Methods: writeLog, getLogs, getLogById.
 - **FastFileService**: Abstract service for upload, download, delete, and file listing.
+- **FastNotificationService**: Abstract service for sending, listing, marking as read notifications.
+- **FastSessionService**: Session management service for authentication and security.
+- **FastSettingsService**: Application settings and configuration management service.
+
+### Cache Services
+- **BaseCacheService**: Abstract cache service interface.
+- **FastCacheService**: High-performance caching with memory/disk storage, automatic expiration, and statistics.
+
+### Rate Limiting Services
+- **BaseRateLimitService**: Abstract rate limiting service interface.
+- **FastRateLimitService**: Rate limiting and throttling with multiple algorithms, brute-force protection, and progressive penalties.
+
+### Middleware System
+- **BaseMiddleware**: Abstract middleware interface for request/response interception.
+- **FastMiddlewareManager**: Priority-based middleware chain execution manager.
+- **ErrorHandlingMiddleware**: Global error handling, logging, and response formatting.
+- **LoggingMiddleware**: Configurable request/response logging with sensitivity controls.
+- **RetryMiddleware**: Automatic retry logic with exponential backoff and custom strategies.
+- **TimeoutMiddleware**: Request timeout handling with method/endpoint-specific configurations.
 
 ### Localization
-- Add your translations to `lib/src/localization/l10n/en.json`, `tr.json`, etc.
-- Use `LocalizationService` to load and access translations.
-
-## Validation & Form Utilities
-
-### FastValidator
-- Static utility class for common field validation.
-- Methods:
-  - `isEmail(String?)`: Validates email address format.
-  - `isPassword(String?)`: Validates password (min 8 chars, at least 1 letter and 1 number).
-  - `isPhone(String?)`: Validates international phone number format.
-  - `isNotEmpty(String?)`: Checks if a field is not empty.
-  - `isUsername(String?)`: Validates username (alphanumeric, 3-32 chars).
-
-#### Example
-```dart
-FastValidator.isEmail('test@example.com'); // true
-FastValidator.isPassword('abc12345'); // true
-FastValidator.isPhone('+905551112233'); // true
-FastValidator.isNotEmpty('hello'); // true
-FastValidator.isUsername('user_01'); // true
-```
-
-## Pagination & Filtering Example
-
-You can use `FastPage<T>` and `FastFilter` for generic, type-safe pagination and filtering in your list services:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-// Example: Listing users with pagination and filtering
-Future<FastPage<FastUser>> listUsers(FastFilter filter) async {
-  // This is a mock example. Replace with your repository/service call.
-  final allUsers = [
-    FastUser(id: '1', username: 'alice', email: 'alice@example.com', roles: [FastRole.admin]),
-    FastUser(id: '2', username: 'bob', email: 'bob@example.com', roles: [FastRole.editor]),
-    // ... more users ...
-  ];
-  // Simple filter by query (username contains)
-  final filtered = filter.query == null
-      ? allUsers
-      : allUsers.where((u) => u.username.contains(filter.query!)).toList();
-  final start = filter.pageIndex * filter.pageSize;
-  final end = (start + filter.pageSize).clamp(0, filtered.length);
-  final pageItems = filtered.sublist(start, end);
-  return FastPage<FastUser>(
-    items: pageItems,
-    totalCount: filtered.length,
-    pageIndex: filter.pageIndex,
-    pageSize: filter.pageSize,
-  );
-}
-
-void main() async {
-  final filter = FastFilter(pageIndex: 0, pageSize: 10, query: 'ali');
-  final page = await listUsers(filter);
-  print('Total users: \\${page.totalCount}');
-  for (final user in page.items) {
-    print(user.username);
-  }
-}
-```
-
-- `FastPage<T>`: Holds paged data and meta (totalCount, pageIndex, pageSize).
-- `FastFilter`: Standardizes pagination, search, and custom filter params for all list endpoints.
-
-## Permission-based UI Example
-
-You can use `FastPermissionBuilder` to show/hide widgets based on user permissions:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-// Assume you have a currentUser with permissions:
-final currentUser = FastUser(
-  id: '1',
-  username: 'admin',
-  email: 'admin@example.com',
-  roles: [FastRole.admin],
-  permissions: [FastPermission.view, FastPermission.edit],
-);
-
-// In your widget tree:
-FastPermissionBuilder(
-  permissions: [FastPermission.edit],
-  userPermissions: currentUser.permissions,
-  builder: (context) => ElevatedButton(
-    onPressed: () {},
-    child: Text('Edit'),
-  ),
-  noAccessBuilder: (context) => SizedBox.shrink(), // Optional
-)
-```
-
-- `permissions`: List of required permissions for the widget.
-- `userPermissions`: The current user's permissions.
-- `requireAll`: If true, all permissions are required (default: false, any is enough).
-- `noAccessBuilder`: Optional widget if permission check fails (default: empty).
-
-## API Client Example
-
-You can use `FastApiClient` for generic, type-safe REST API calls:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-final api = FastApiClient(baseUrl: 'https://api.example.com');
-
-// GET request
-final usersResponse = await api.get<List<dynamic>>('/users');
-if (usersResponse.success) {
-  print(usersResponse.data);
-}
-
-// POST request with body
-final createResponse = await api.post<Map<String, dynamic>>(
-  '/users',
-  body: {'username': 'test', 'email': 'test@example.com'},
-);
-if (createResponse.success) {
-  print(createResponse.data);
-}
-
-// Custom model mapping
-final userResponse = await api.get<FastUser>(
-  '/users/1',
-  fromJson: (json) => FastUser.fromJson(json),
-);
-if (userResponse.success) {
-  print(userResponse.data?.username);
-}
-```
-
-- Supports GET, POST, PUT, DELETE.
-- Returns `FastResponse<T>` for unified error/success handling.
-- Use `fromJson` for custom model deserialization.
-- Supports dynamic auth token/header via `getAuthToken` param.
-
-## Notification/Message Service Example
-
-You can use `FastNotification` and `FastNotificationService` for in-app/system/email/SMS notifications:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-// Example notification model
-final notification = FastNotification(
-  id: 'notif-1',
-  type: FastNotificationType.info,
-  title: 'Welcome',
-  message: 'Welcome to the system!',
-  targetUserId: 'user-1',
-  isRead: false,
-  createdAt: DateTime.now(),
-);
-
-// Example service usage (abstract, implement for your backend)
-class MyNotificationService extends FastNotificationService {
-  @override
-  Future<FastResponse<bool>> send(FastNotification notification) async {
-    // Call your API or notification backend here
-    return FastResponse.success(true);
-  }
-  // ...implement other methods...
-}
-
-// Usage
-final service = MyNotificationService();
-await service.send(notification);
-```
-
-- `FastNotification`: Model for all notification/message types (in-app, email, SMS, push, etc).
-- `FastNotificationService`: Abstract service for sending, listing, marking as read, and deleting notifications.
-- Supports notification type, read/unread, target user, meta, etc.
-
-## File/Media Management Example
-
-You can use `FastFileMeta` and `FastFileService` for file upload, download, delete, and permission management:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-// Example file metadata
-final fileMeta = FastFileMeta(
-  id: 'file-1',
-  name: 'document.pdf',
-  type: FastFileType.document,
-  size: 102400,
-  mimeType: 'application/pdf',
-  url: 'https://cdn.example.com/files/document.pdf',
-  uploadedBy: 'user-1',
-  uploadedAt: DateTime.now(),
-  access: [FastPermission.view, FastPermission.edit],
-);
-
-// Example service usage (abstract, implement for your backend)
-class MyFileService extends FastFileService {
-  @override
-  Future<FastResponse<FastFileMeta>> upload({
-    required List<int> bytes,
-    required String name,
-    required String mimeType,
-    FastFileType type = FastFileType.other,
-    List<FastPermission>? access,
-    Map<String, dynamic>? meta,
-  }) async {
-    // Call your API or storage backend here
-    return FastResponse.success(fileMeta);
-  }
-  // ...implement other methods...
-}
-
-// Usage
-final fileService = MyFileService();
-await fileService.upload(bytes: [], name: 'test.txt', mimeType: 'text/plain');
-```
-
-- `FastFileMeta`: Model for file/media metadata, access permissions (now List<FastPermission>), and extensible meta.
-- `FastFileService`: Abstract service for upload, download, delete, and file listing.
-- `FastFileType`: Enum for file/media types (image, video, document, etc).
-- `access`: List of FastPermission for file-level access control.
-
-## User Activity/Session Management Example
-
-You can use `FastSession` and `FastSessionService` for managing active sessions, last login/activity, and session termination:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-// Example session model
-final session = FastSession(
-  id: 'sess-1',
-  userId: 'user-1',
-  createdAt: DateTime.now().subtract(Duration(hours: 2)),
-  lastActiveAt: DateTime.now(),
-  deviceInfo: 'Chrome on macOS',
-  ip: '192.168.1.10',
-  isActive: true,
-);
-
-// Example service usage (abstract, implement for your backend)
-class MySessionService extends FastSessionService {
-  @override
-  Future<FastResponse<List<FastSession>>> listUserSessions(String userId) async {
-    // Call your API or session backend here
-    return FastResponse.success([session]);
-  }
-  // ...implement other methods...
-}
-
-// Usage
-final sessionService = MySessionService();
-await sessionService.listUserSessions('user-1');
-```
-
-- `FastSession`: Model for user session/activity (id, userId, createdAt, lastActiveAt, deviceInfo, ip, isActive, meta).
-- `FastSessionService`: Abstract service for listing, getting, terminating, and updating sessions.
-- Suitable for session termination, tracking last login/activity time, and multi-device support.
-
-## Settings/Config Service Example
-
-You can use `FastSetting` and `FastSettingsService` for dynamic, user/role/tenant-based application settings:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-
-// Example setting model
-final setting = FastSetting(
-  id: 'theme',
-  value: 'dark',
-  userId: 'user-1',
-  description: 'User theme preference',
-);
-
-// Example service usage (abstract, implement for your backend)
-class MySettingsService extends FastSettingsService {
-  @override
-  Future<FastResponse<FastSetting>> getSetting(String id, {String? userId, String? roleId, String? tenantId}) async {
-    // Call your API or config backend here
-    return FastResponse.success(setting);
-  }
-  // ...implement other methods...
-}
-
-// Usage
-final settingsService = MySettingsService();
-await settingsService.getSetting('theme', userId: 'user-1');
-```
-
-- `FastSetting`: Model for dynamic application settings/config (id, value, userId, roleId, tenantId, description, meta).
-- `FastSettingsService`: Abstract service for getting, setting, deleting, and listing settings.
-- Suitable for customizable settings per user, role, or tenant.
-
-
-
-## Advanced Localization Example
-
-You can use `FastLocalization` and `FastLocalizationController` for runtime language switching, dynamic translation loading, and user preference management:
-
-```dart
-import 'package:fast_common_module/fast_common_module.dart';
-import 'package:flutter/material.dart';
-
-// Initialize localization system
-final localizationController = FastLocalizationController(
-  getPreference: (key) async => sharedPreferences.getString(key),
-  setPreference: (key, value) async => sharedPreferences.setString(key, value),
-);
-
-// Initialize with supported languages
-await localizationController.initialize(
-  defaultLanguage: FastLanguage.english,
-  supportedLanguages: [
-    FastLanguage.english,
-    FastLanguage.turkish,
-    FastLanguage.arabic,
-  ],
-);
-
-// Use in your app
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FastLocalizationBuilder(
-      controller: localizationController,
-      builder: (context, controller) {
-        return MaterialApp(
-          locale: Locale(controller.currentLanguage.code),
-          textDirection: controller.textDirection,
-          home: MyHomePage(),
-        );
-      },
-    );
-  }
-}
-
-// Language selection widget
-FastLanguageSelector(
-  controller: localizationController,
-  onLanguageChanged: (language) {
-    print('Language changed to: \\${language.nativeName}');
-  },
-)
-
-// Or use dropdown
-FastLanguageDropdown(
-  controller: localizationController,
-  hint: 'Select Language',
-)
-
-// Add dynamic translations
-controller.addTranslation('welcome_user', 'Welcome, {name}!');
-
-// Use translations
-Text(controller.tr('welcome_user', params: {'name': 'John'}))
-Text('welcome_message'.tr) // Using extension
-```
-
-### Advanced Localization Features:
-- **Runtime Language Switching**: Change language without app restart
-- **Dynamic Translation Loading**: Add/update translations at runtime
-- **User Preference Management**: Automatic save/restore of language choice
-- **Pluralization Support**: Handle plural forms for different languages
-- **RTL Support**: Automatic text direction handling
-- **Fallback Translations**: Graceful handling of missing translations
-- **Multiple UI Components**: Selector, dropdown, popup menu widgets
+- **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
+- **FastLocalization**: Core localization functionality with runtime language switching.
+- **FastLocalizationController**: Localization state management and user preference handling.
+- **FastLanguage**: Language model with code, name, flag, and RTL support.
+- **FastTranslation**: Translation model with key-value pairs and pluralization.
+- **FastLanguageSelector**: Widget for language selection with beautiful UI.
+
+### Utilities
+- **BaseRepository**: Generic repository interface for CRUD operations.
+- **FastValidator**: Static utility class for common field validation (email, password, phone, etc.).
+- **Helpers**: Utility functions in `utils/helpers.dart`.
+- **FastPermissionBuilder**: Widget for conditional UI rendering based on permissions.
+
+### Enums
+- **FastFileType**: File type enumeration (image, video, audio, document, archive, other).
+- **FastNotificationType**: Notification type enumeration (info, warning, error, success).
 
 ---
 
-> Last updated: 2025-06-14
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+If you find this package useful, please give it a ⭐ on GitHub!
+
+For questions and support, please open an issue on the [GitHub repository](https://github.com/fmustaficc/fast_common_module).
+
+---
+
+**FastCommonModule** - Enterprise-ready Flutter common module for rapid development 🚀

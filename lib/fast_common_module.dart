@@ -62,7 +62,7 @@ export 'src/common/model/fast_filter.dart';
 export 'src/common/service/fast_api_client.dart';
 export 'src/common/model/fast_notification.dart';
 export 'src/common/service/fast_notification_service.dart';
-export 'src/common/model/fast_notification_type.dart';
+export 'src/common/enums/fast_notification_type.dart';
 export 'src/common/model/fast_file_meta.dart';
 export 'src/common/service/fast_file_service.dart';
 export 'src/common/enums/fast_file_type.dart';
@@ -70,6 +70,14 @@ export 'src/common/model/fast_session.dart';
 export 'src/common/service/fast_session_service.dart';
 export 'src/common/model/fast_setting.dart';
 export 'src/common/service/fast_settings_service.dart';
+
+// Middleware
+export 'src/middleware/base_middleware.dart';
+export 'src/middleware/error_handling_middleware.dart';
+export 'src/middleware/fast_middleware_manager.dart';
+export 'src/middleware/logging_middleware.dart';
+export 'src/middleware/retry_middleware.dart';
+export 'src/middleware/timeout_middleware.dart';
 
 // Utils
 export 'src/utils/helpers.dart';
