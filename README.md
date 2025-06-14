@@ -33,6 +33,7 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 - **Pagination & Filtering:** FastPage and FastFilter models for data pagination
 
 ### 🔧 **Utilities & Services**
+- **High-Performance Caching:** FastCacheService with memory/disk storage, automatic expiration, and multiple eviction policies
 - **Validation & Forms:** FastValidator with comprehensive validation rules
 - **Audit & Logging:** FastAuditLog for tracking user actions and system events
 - **Notification System:** FastNotification service for in-app messaging
@@ -46,6 +47,7 @@ lib/
   fast_common_module.dart
   src/
     auth/           # Authentication and token services
+    cache/          # High-performance caching with memory/disk storage
     common/         # Shared models, response, exception, base repository
     localization/   # Localization files and service
     permission/     # Permission models, services
@@ -62,9 +64,11 @@ import 'package:fast_common_module/fast_common_module.dart';
 
 ## Core Models
 - `FastUser`, `FastRole`, `FastPermission`, `FastDynamicPermission`, `FastTenant`, `FastResponse<T>`, `FastException`
+- `FastCacheItem<T>`, `FastCacheConfig`, `FastCacheStatistics`
 
 ## Core Services
 - `BaseAuthService`, `FastUserService`, `FastRolePermissionService`, `FastTenantService`, `FastTokenService`
+- `BaseCacheService`, `FastCacheService`
 
 ## Development
 - Follow code style and documentation guidelines.
@@ -117,6 +121,69 @@ void main() async {
 }
 ```
 
+## High-Performance Caching Example
+
+You can use `FastCacheService` for high-performance caching with memory and disk storage:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Configure cache service
+final cacheConfig = FastCacheConfig(
+  maxMemoryItems: 1000,
+  maxMemorySize: 50 * 1024 * 1024, // 50MB
+  maxDiskItems: 5000,
+  maxDiskSize: 100 * 1024 * 1024, // 100MB
+  defaultTtlMs: 30 * 60 * 1000, // 30 minutes
+  enableMemoryCache: true,
+  enableDiskCache: true,
+  enableAutoCleanup: true,
+  evictionPolicy: FastCacheEvictionPolicy.lru,
+);
+
+// Initialize cache service
+final cacheService = FastCacheService(config: cacheConfig);
+await cacheService.initialize();
+
+// Cache user data
+final user = FastUser(id: '1', username: 'john', email: 'john@example.com');
+await cacheService.put('user:1', user, ttl: Duration(hours: 1));
+
+// Get cached data
+final cachedUser = await cacheService.get<FastUser>('user:1');
+if (cachedUser != null) {
+  print('Cache hit: ${cachedUser.username}');
+} else {
+  print('Cache miss - loading from database...');
+}
+
+// Cache permissions for quick access
+final permissions = [FastPermission.read, FastPermission.edit];
+await cacheService.put('user:1:permissions', permissions);
+
+// Check cache statistics
+final stats = cacheService.getStatistics();
+print('Cache hit ratio: ${stats.hitRatioPercentage.toStringAsFixed(1)}%');
+print('Memory items: ${stats.memoryItems}');
+print('Disk items: ${stats.diskItems}');
+
+// Manual cleanup
+final removedCount = await cacheService.cleanupExpired();
+print('Removed $removedCount expired items');
+
+// Clear all cache
+await cacheService.clear();
+```
+
+### Caching Features:
+- **Memory & Disk Storage**: Ultra-fast memory cache with persistent disk storage
+- **Automatic Expiration**: TTL-based expiration with background cleanup
+- **Multiple Eviction Policies**: LRU, LFU, FIFO, TTL, and Random eviction strategies
+- **Cache Statistics**: Detailed performance metrics and hit/miss ratios
+- **Generic Type Support**: Type-safe caching for any data type
+- **Configurable Limits**: Memory and disk size limits with automatic eviction
+- **Background Cleanup**: Automatic removal of expired items
+
 ---
 
 ## API Reference
@@ -131,6 +198,9 @@ void main() async {
 - **FastException**: Custom exception for error handling with code, message, details, path, className, method.
 - **FastAuditLog**: Model for tracking user and system actions. Fields: id, userId, action, targetId, targetType, timestamp, meta.
 - **FastFileMeta**: Model for file/media metadata, access permissions (now List<FastPermission>), and extensible meta.
+- **FastCacheItem<T>**: Cache item model with data, expiration, access tracking and metadata.
+- **FastCacheConfig**: Cache configuration with memory/disk limits, TTL, cleanup policies.
+- **FastCacheStatistics**: Cache performance metrics with hit/miss ratios and usage statistics.
 
 ### Services & Interfaces
 - **BaseAuthService**: Abstract authentication service (login, register, logout, isLoggedIn).
@@ -145,6 +215,8 @@ void main() async {
 - **FastTenantService**: Tenant management service interface.
 - **BaseRepository**: Generic repository interface for CRUD operations.
 - **FastTokenService**: JWT/token management interface.
+- **BaseCacheService**: Abstract cache service interface.
+- **FastCacheService**: High-performance caching with memory/disk storage, automatic expiration, and statistics.
 - **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
 - **Helpers**: Utility functions in `utils/helpers.dart`.
 - **FastAuditLogService**: Interface for audit log service. Methods: writeLog, getLogs, getLogById.

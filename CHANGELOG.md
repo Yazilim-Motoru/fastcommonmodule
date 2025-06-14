@@ -3,6 +3,14 @@
 ## 1.0.4
 - **Enhanced README.md Features Section**: Completely restructured main features section with organized categories and comprehensive feature list.
 - **Advanced Localization Highlights**: Added detailed coverage of runtime language switching, dynamic translation loading, user preference management, pluralization support, RTL support, fallback translations, and rich UI components.
+- **High-Performance Caching Layer**: Added comprehensive caching system with FastCacheService.
+- **Memory & Disk Storage**: Dual-layer caching for ultra-fast memory access and persistent disk storage.
+- **Advanced Cache Features**: TTL-based expiration, multiple eviction policies (LRU, LFU, FIFO, TTL, Random), automatic cleanup.
+- **Cache Statistics & Monitoring**: Detailed performance metrics with hit/miss ratios, memory/disk usage tracking.
+- **Generic Type Support**: Type-safe caching for any data type with FastCacheItem<T>.
+- **Configurable Cache Policies**: FastCacheConfig for memory/disk limits, cleanup intervals, and cache behavior.
+- **Enhanced Documentation**: Added comprehensive caching examples and API reference.
+- **Updated Features Section**: Added caching to main features and folder structure.
 - **Improved Documentation Structure**: Features now organized into Architecture & Structure, User & Access Management, Advanced Localization, API & Data Management, and Utilities & Services categories.
 - **Updated Documentation Date**: Refreshed last updated date to reflect current state of the module.
 - **Enhanced Feature Visibility**: Better presentation of enterprise-ready capabilities for pub.dev users.
