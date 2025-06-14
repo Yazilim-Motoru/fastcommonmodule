@@ -3,15 +3,42 @@
 A modular, enterprise-ready Flutter common module for microservice architectures, multilingual support, and robust role/permission/user/tenant management.
 
 ## Features
-- **Modular structure:** All models, services, repositories, and mappers are separated by domain.
-- **Role & Permission Management:** Supports both static (enum) and dynamic (database/UI) permissions.
-- **User Management:** Flexible and extensible FastUser model.
-- **Multi-Tenancy:** FastTenant model and services for multi-organization/customer support.
-- **Unified Response Model:** All service/repository operations use FastResponse<T> for standardized success/error/meta handling.
-- **Exception Handling:** FastException for detailed error management.
-- **Multilingual Support:** JSON/ARB-based localization infrastructure.
-- **Token/JWT Service:** Ready-to-extend authentication infrastructure.
-- **Developer Friendly:** All code is documented in English and IDE-friendly.
+
+### 🏗️ **Architecture & Structure**
+- **Modular Design:** All models, services, repositories, and mappers are separated by domain
+- **Enterprise-Ready:** Built for microservice architectures and scalable applications
+- **Developer Friendly:** All code is documented in English and IDE-friendly
+
+### 👥 **User & Access Management** 
+- **User Management:** Flexible and extensible FastUser model with comprehensive user data
+- **Role & Permission System:** Supports both static (enum) and dynamic (database/UI) permissions
+- **Permission-based UI:** FastPermissionBuilder widget for conditional UI rendering
+- **Multi-Tenancy:** FastTenant model and services for multi-organization/customer support
+- **Authentication Infrastructure:** Ready-to-extend token/JWT service and auth framework
+
+### 🌍 **Advanced Localization**
+- **Runtime Language Switching:** Change language without app restart
+- **Dynamic Translation Loading:** Add/update translations at runtime  
+- **User Preference Management:** Automatic save/restore of language choice
+- **Pluralization Support:** Handle plural forms for different languages
+- **RTL Support:** Automatic text direction handling for Arabic, Hebrew, etc.
+- **Fallback Translations:** Graceful handling of missing translations
+- **Rich UI Components:** Language selector, dropdown, and popup menu widgets
+
+### 📡 **API & Data Management**
+- **Unified Response Model:** All operations use FastResponse<T> for standardized success/error/meta handling
+- **Exception Handling:** FastException for detailed error management with codes and metadata
+- **API Client:** FastApiClient for REST API calls with built-in error handling
+- **Generic Repository:** Base repository pattern for consistent data access
+- **Pagination & Filtering:** FastPage and FastFilter models for data pagination
+
+### 🔧 **Utilities & Services**
+- **Validation & Forms:** FastValidator with comprehensive validation rules
+- **Audit & Logging:** FastAuditLog for tracking user actions and system events
+- **Notification System:** FastNotification service for in-app messaging
+- **File & Media Management:** FastFileMeta service for file upload/download operations
+- **Session Management:** FastSession service for user activity tracking
+- **Settings & Configuration:** FastSetting service for app configuration management
 
 ## Folder Structure
 ```
@@ -417,9 +444,7 @@ await settingsService.getSetting('theme', userId: 'user-1');
 - `FastSettingsService`: Abstract service for getting, setting, deleting, and listing settings.
 - Suitable for customizable settings per user, role, or tenant.
 
----
 
-> Last updated: 2025-05-31
 
 ## Advanced Localization Example
 
@@ -492,3 +517,7 @@ Text('welcome_message'.tr) // Using extension
 - **RTL Support**: Automatic text direction handling
 - **Fallback Translations**: Graceful handling of missing translations
 - **Multiple UI Components**: Selector, dropdown, popup menu widgets
+
+---
+
+> Last updated: 2025-06-14

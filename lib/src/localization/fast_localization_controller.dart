@@ -7,33 +7,33 @@ import 'model/fast_translation.dart';
 /// Controller for managing user language preferences with persistent storage.
 class FastLocalizationController extends ChangeNotifier {
   final FastLocalization _localization = FastLocalization.instance;
-  
+
   /// Storage interface for saving user preferences
   final Future<String?> Function(String key)? _getPreference;
   final Future<void> Function(String key, String value)? _setPreference;
-  
+
   static const String _languagePreferenceKey = 'fast_localization_language';
 
   FastLocalizationController({
     Future<String?> Function(String key)? getPreference,
     Future<void> Function(String key, String value)? setPreference,
-  }) : _getPreference = getPreference,
-       _setPreference = setPreference {
+  })  : _getPreference = getPreference,
+        _setPreference = setPreference {
     // Listen to localization changes
     _localization.addLanguageListener(_onLanguageChanged);
   }
 
   /// Current language
   FastLanguage get currentLanguage => _localization.currentLanguage;
-  
+
   /// Available languages
   List<FastLanguage> get availableLanguages => _localization.availableLanguages;
-  
+
   /// Default language
   FastLanguage get defaultLanguage => _localization.defaultLanguage;
-  
+
   /// Current language direction (LTR/RTL)
-  TextDirection get textDirection => 
+  TextDirection get textDirection =>
       currentLanguage.isRTL ? TextDirection.rtl : TextDirection.ltr;
 
   /// Initialize with user preferences
@@ -52,14 +52,14 @@ class FastLocalizationController extends ChangeNotifier {
       supportedLanguages: supportedLanguages,
       userPreferredLanguage: savedLanguageCode,
     );
-    
+
     notifyListeners();
   }
 
   /// Change language and save preference
   Future<void> changeLanguage(FastLanguage language) async {
     await _localization.changeLanguage(language);
-    
+
     // Save user preference
     if (_setPreference != null) {
       await _setPreference!(_languagePreferenceKey, language.code);
@@ -105,7 +105,8 @@ class FastLocalizationController extends ChangeNotifier {
   ) async {
     try {
       final Map<String, dynamic> translationsMap = json.decode(jsonString);
-      await _localization.loadTranslationsFromMap(languageCode, translationsMap);
+      await _localization.loadTranslationsFromMap(
+          languageCode, translationsMap);
       notifyListeners();
     } catch (e) {
       throw FormatException('Invalid JSON format: $e');
@@ -142,7 +143,8 @@ class FastLocalizationController extends ChangeNotifier {
     Map<String, dynamic>? params,
     int? count,
     String? fallback,
-  }) => translate(key, params: params, count: count, fallback: fallback);
+  }) =>
+      translate(key, params: params, count: count, fallback: fallback);
 
   /// Check if a key has translation
   bool hasTranslation(String key) {
@@ -167,7 +169,8 @@ class FastLocalizationController extends ChangeNotifier {
 
 /// Widget that rebuilds when language changes
 class FastLocalizationBuilder extends StatefulWidget {
-  final Widget Function(BuildContext context, FastLocalizationController controller) builder;
+  final Widget Function(
+      BuildContext context, FastLocalizationController controller) builder;
   final FastLocalizationController? controller;
 
   const FastLocalizationBuilder({
@@ -177,7 +180,8 @@ class FastLocalizationBuilder extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<FastLocalizationBuilder> createState() => _FastLocalizationBuilderState();
+  State<FastLocalizationBuilder> createState() =>
+      _FastLocalizationBuilderState();
 }
 
 class _FastLocalizationBuilderState extends State<FastLocalizationBuilder> {

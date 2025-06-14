@@ -90,7 +90,7 @@ class FastTranslation extends FastModel {
   /// Gets the appropriate plural form for given count.
   String getPlural(int count) {
     if (!isPlural || pluralForms == null) return value;
-    
+
     // Simple plural logic for most languages
     if (count == 0 && pluralForms!.containsKey('zero')) {
       return pluralForms!['zero']!;
@@ -99,7 +99,7 @@ class FastTranslation extends FastModel {
     } else if (pluralForms!.containsKey('other')) {
       return pluralForms!['other']!;
     }
-    
+
     return value;
   }
 

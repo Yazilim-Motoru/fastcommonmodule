@@ -19,7 +19,8 @@ class FastLocalization {
     FastLanguage.english,
     FastLanguage.turkish,
   ];
-  List<FastLanguage> get availableLanguages => List.unmodifiable(_availableLanguages);
+  List<FastLanguage> get availableLanguages =>
+      List.unmodifiable(_availableLanguages);
 
   /// Current translations map: key -> translation
   final Map<String, FastTranslation> _translations = {};
@@ -75,7 +76,7 @@ class FastLocalization {
         'packages/fast_common_module/lib/src/localization/l10n/${language.code}.json',
       );
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
-      
+
       _translations.clear();
       jsonMap.forEach((key, value) {
         _translations[key] = FastTranslation(
@@ -99,7 +100,7 @@ class FastLocalization {
 
     _currentLanguage = language;
     await _loadLanguageTranslations(language);
-    
+
     // Notify all listeners
     for (final listener in _listeners) {
       listener(language);
@@ -141,7 +142,7 @@ class FastLocalization {
     String? fallback,
   }) {
     FastTranslation? translation = _translations[key];
-    
+
     // Try fallback if not found in current language
     if (translation == null && _fallbackTranslations.containsKey(key)) {
       translation = _fallbackTranslations[key];
@@ -151,9 +152,8 @@ class FastLocalization {
       return fallback ?? key;
     }
 
-    String result = count != null
-        ? translation.getPlural(count)
-        : translation.value;
+    String result =
+        count != null ? translation.getPlural(count) : translation.value;
 
     // Replace parameters if provided
     if (params != null) {
@@ -195,8 +195,7 @@ class FastLocalization {
 
   /// Get language by code
   FastLanguage? getLanguageByCode(String code) {
-    final languages = _availableLanguages
-        .where((lang) => lang.code == code);
+    final languages = _availableLanguages.where((lang) => lang.code == code);
     return languages.isNotEmpty ? languages.first : null;
   }
 
@@ -241,11 +240,11 @@ class FastLocalization {
 extension LocalizationExtension on String {
   /// Translate this string using FastLocalization
   String get tr => FastLocalization.instance.translate(this);
-  
+
   /// Translate with parameters
   String trParams(Map<String, dynamic> params) =>
       FastLocalization.instance.translate(this, params: params);
-      
+
   /// Translate with count for pluralization
   String trPlural(int count) =>
       FastLocalization.instance.translate(this, count: count);

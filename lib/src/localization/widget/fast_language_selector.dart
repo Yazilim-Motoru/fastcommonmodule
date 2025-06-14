@@ -37,14 +37,14 @@ class FastLanguageSelector extends StatelessWidget {
         mainAxisSize: mainAxisSize,
         children: controller.availableLanguages.map((language) {
           final isSelected = language == controller.currentLanguage;
-          
+
           if (itemBuilder != null) {
             return GestureDetector(
               onTap: () => _selectLanguage(language),
               child: itemBuilder!(language, isSelected),
             );
           }
-          
+
           return _DefaultLanguageItem(
             language: language,
             isSelected: isSelected,
@@ -89,8 +89,12 @@ class _DefaultLanguageItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         margin: const EdgeInsets.symmetric(vertical: 2.0),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
-          border: isSelected ? Border.all(color: Theme.of(context).primaryColor) : null,
+          color: isSelected
+              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              : null,
+          border: isSelected
+              ? Border.all(color: Theme.of(context).primaryColor)
+              : null,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Row(
@@ -206,7 +210,7 @@ class FastLanguagePopupMenu extends StatelessWidget {
       itemBuilder: (context) {
         return controller.availableLanguages.map((language) {
           final isSelected = language == controller.currentLanguage;
-          
+
           return PopupMenuItem<FastLanguage>(
             value: language,
             child: Row(
@@ -224,7 +228,8 @@ class FastLanguagePopupMenu extends StatelessWidget {
                   child: Text(
                     showNativeName ? language.nativeName : language.name,
                     style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),
