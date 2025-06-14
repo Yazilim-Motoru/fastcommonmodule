@@ -42,6 +42,14 @@ export 'src/cache/model/fast_cache_item.dart';
 export 'src/cache/model/fast_cache_config.dart';
 export 'src/cache/model/fast_cache_statistics.dart';
 
+// Rate Limiting
+export 'src/rate_limit/service/base_rate_limit_service.dart';
+export 'src/rate_limit/service/fast_rate_limit_service.dart';
+export 'src/rate_limit/model/fast_rate_limit_config.dart';
+export 'src/rate_limit/model/fast_rate_limit_entry.dart';
+export 'src/rate_limit/model/fast_rate_limit_result.dart';
+export 'src/rate_limit/model/fast_rate_limit_statistics.dart';
+
 // Common
 export 'src/common/model/fast_model.dart';
 export 'src/common/model/fast_response.dart';
