@@ -34,6 +34,7 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 
 ### 🔧 **Utilities & Services**
 - **High-Performance Caching:** FastCacheService with memory/disk storage, automatic expiration, and multiple eviction policies
+- **Rate Limiting & Throttling:** FastRateLimitService with brute-force protection, multiple algorithms, and progressive penalties
 - **Validation & Forms:** FastValidator with comprehensive validation rules
 - **Audit & Logging:** FastAuditLog for tracking user actions and system events
 - **Notification System:** FastNotification service for in-app messaging
@@ -51,6 +52,7 @@ lib/
     common/         # Shared models, response, exception, base repository
     localization/   # Localization files and service
     permission/     # Permission models, services
+    rate_limit/     # Rate limiting and throttling services
     role/           # Role models, services
     tenant/         # Tenant models, services
     user/           # User models, services
@@ -65,10 +67,12 @@ import 'package:fast_common_module/fast_common_module.dart';
 ## Core Models
 - `FastUser`, `FastRole`, `FastPermission`, `FastDynamicPermission`, `FastTenant`, `FastResponse<T>`, `FastException`
 - `FastCacheItem<T>`, `FastCacheConfig`, `FastCacheStatistics`
+- `FastRateLimitConfig`, `FastRateLimitEntry`, `FastRateLimitResult`, `FastRateLimitStatistics`
 
 ## Core Services
 - `BaseAuthService`, `FastUserService`, `FastRolePermissionService`, `FastTenantService`, `FastTokenService`
 - `BaseCacheService`, `FastCacheService`
+- `BaseRateLimitService`, `FastRateLimitService`
 
 ## Development
 - Follow code style and documentation guidelines.
@@ -184,6 +188,74 @@ await cacheService.clear();
 - **Configurable Limits**: Memory and disk size limits with automatic eviction
 - **Background Cleanup**: Automatic removal of expired items
 
+## Rate Limiting & Throttling Example
+
+You can use `FastRateLimitService` for API protection and brute-force attack prevention:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// Configure rate limiting
+final rateLimitConfig = FastRateLimitConfig(
+  maxRequests: 100, // 100 requests
+  windowMs: 60 * 1000, // per minute
+  blockDurationMs: 15 * 60 * 1000, // 15 minutes block
+  algorithm: FastRateLimitAlgorithm.slidingWindow,
+  enableProgressivePenalties: true,
+  penaltyMultiplier: 2.0,
+  whitelist: ['trusted-api-key'], // Bypass rate limiting
+  blacklist: ['blocked-ip'], // Permanently blocked
+);
+
+// Initialize rate limiting service
+final rateLimitService = FastRateLimitService(config: rateLimitConfig);
+await rateLimitService.initialize();
+
+// Check request before processing
+String clientId = 'user123'; // or IP address, API key, etc.
+final result = await rateLimitService.checkRequest(clientId);
+
+if (result.isAllowed) {
+  print('Request allowed - ${result.remainingRequests} remaining');
+  // Process the request
+} else {
+  print('Request blocked: ${result.blockReason}');
+  if (result.retryAfter != null) {
+    print('Retry after: ${result.retryAfterFormatted}');
+  }
+  // Return 429 Too Many Requests
+}
+
+// Manual blocking for suspicious activity
+await rateLimitService.blockIdentifier('suspicious-user', 
+    blockDuration: Duration(hours: 24));
+
+// Whitelist trusted clients
+await rateLimitService.addToWhitelist('premium-api-key');
+
+// Blacklist abusive clients
+await rateLimitService.addToBlacklist('malicious-ip');
+
+// Monitor rate limiting statistics
+final stats = rateLimitService.getStatistics();
+print('Total requests: ${stats.totalRequests}');
+print('Block ratio: ${stats.blockRatioPercentage.toStringAsFixed(1)}%');
+print('Currently blocked: ${stats.currentlyBlocked}');
+
+// HTTP headers for client information
+final headers = result.toHttpHeaders();
+// X-RateLimit-Limit, X-RateLimit-Remaining, Retry-After, etc.
+```
+
+### Rate Limiting Features:
+- **Multiple Algorithms**: Sliding window, fixed window, token bucket, leaky bucket
+- **Brute-Force Protection**: Progressive penalties and automatic blocking
+- **Whitelist/Blacklist**: Bypass or permanently block specific identifiers
+- **Flexible Identification**: Support for IP, user ID, API key, or custom identifiers
+- **Detailed Statistics**: Request patterns, violation tracking, and monitoring
+- **HTTP Standard Headers**: RFC-compliant rate limit headers for APIs
+- **Auto-Cleanup**: Automatic removal of expired entries and blocks
+
 ---
 
 ## API Reference
@@ -201,6 +273,10 @@ await cacheService.clear();
 - **FastCacheItem<T>**: Cache item model with data, expiration, access tracking and metadata.
 - **FastCacheConfig**: Cache configuration with memory/disk limits, TTL, cleanup policies.
 - **FastCacheStatistics**: Cache performance metrics with hit/miss ratios and usage statistics.
+- **FastRateLimitConfig**: Rate limiting configuration with algorithms, penalties, whitelist/blacklist.
+- **FastRateLimitEntry**: Rate limiting entry tracking request history and violations for identifiers.
+- **FastRateLimitResult**: Rate limiting check result with allow/block status and retry information.
+- **FastRateLimitStatistics**: Rate limiting performance metrics and violation tracking.
 
 ### Services & Interfaces
 - **BaseAuthService**: Abstract authentication service (login, register, logout, isLoggedIn).
@@ -217,6 +293,8 @@ await cacheService.clear();
 - **FastTokenService**: JWT/token management interface.
 - **BaseCacheService**: Abstract cache service interface.
 - **FastCacheService**: High-performance caching with memory/disk storage, automatic expiration, and statistics.
+- **BaseRateLimitService**: Abstract rate limiting service interface.
+- **FastRateLimitService**: Rate limiting and throttling with multiple algorithms, brute-force protection, and progressive penalties.
 - **LocalizationService**: Loads and provides localized strings from JSON/ARB files.
 - **Helpers**: Utility functions in `utils/helpers.dart`.
 - **FastAuditLogService**: Interface for audit log service. Methods: writeLog, getLogs, getLogById.

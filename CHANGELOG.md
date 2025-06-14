@@ -9,8 +9,14 @@
 - **Cache Statistics & Monitoring**: Detailed performance metrics with hit/miss ratios, memory/disk usage tracking.
 - **Generic Type Support**: Type-safe caching for any data type with FastCacheItem<T>.
 - **Configurable Cache Policies**: FastCacheConfig for memory/disk limits, cleanup intervals, and cache behavior.
-- **Enhanced Documentation**: Added comprehensive caching examples and API reference.
-- **Updated Features Section**: Added caching to main features and folder structure.
+- **Rate Limiting & Throttling System**: Added comprehensive rate limiting with FastRateLimitService.
+- **Multiple Rate Limiting Algorithms**: Sliding window, fixed window, token bucket, and leaky bucket algorithms.
+- **Brute-Force Protection**: Progressive penalties, automatic blocking, and violation tracking.
+- **Whitelist/Blacklist Support**: Bypass or permanently block specific identifiers (IP, user ID, API key).
+- **Rate Limiting Statistics**: Detailed performance metrics, violation tracking, and security monitoring.
+- **HTTP Standard Compliance**: RFC-compliant rate limit headers for API responses.
+- **Enhanced Documentation**: Added comprehensive caching and rate limiting examples with API reference.
+- **Updated Features Section**: Added caching and rate limiting to main features and folder structure.
 - **Improved Documentation Structure**: Features now organized into Architecture & Structure, User & Access Management, Advanced Localization, API & Data Management, and Utilities & Services categories.
 - **Updated Documentation Date**: Refreshed last updated date to reflect current state of the module.
 - **Enhanced Feature Visibility**: Better presentation of enterprise-ready capabilities for pub.dev users.
