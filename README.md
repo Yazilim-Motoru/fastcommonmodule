@@ -420,3 +420,75 @@ await settingsService.getSetting('theme', userId: 'user-1');
 ---
 
 > Last updated: 2025-05-31
+
+## Advanced Localization Example
+
+You can use `FastLocalization` and `FastLocalizationController` for runtime language switching, dynamic translation loading, and user preference management:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+import 'package:flutter/material.dart';
+
+// Initialize localization system
+final localizationController = FastLocalizationController(
+  getPreference: (key) async => sharedPreferences.getString(key),
+  setPreference: (key, value) async => sharedPreferences.setString(key, value),
+);
+
+// Initialize with supported languages
+await localizationController.initialize(
+  defaultLanguage: FastLanguage.english,
+  supportedLanguages: [
+    FastLanguage.english,
+    FastLanguage.turkish,
+    FastLanguage.arabic,
+  ],
+);
+
+// Use in your app
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FastLocalizationBuilder(
+      controller: localizationController,
+      builder: (context, controller) {
+        return MaterialApp(
+          locale: Locale(controller.currentLanguage.code),
+          textDirection: controller.textDirection,
+          home: MyHomePage(),
+        );
+      },
+    );
+  }
+}
+
+// Language selection widget
+FastLanguageSelector(
+  controller: localizationController,
+  onLanguageChanged: (language) {
+    print('Language changed to: \\${language.nativeName}');
+  },
+)
+
+// Or use dropdown
+FastLanguageDropdown(
+  controller: localizationController,
+  hint: 'Select Language',
+)
+
+// Add dynamic translations
+controller.addTranslation('welcome_user', 'Welcome, {name}!');
+
+// Use translations
+Text(controller.tr('welcome_user', params: {'name': 'John'}))
+Text('welcome_message'.tr) // Using extension
+```
+
+### Advanced Localization Features:
+- **Runtime Language Switching**: Change language without app restart
+- **Dynamic Translation Loading**: Add/update translations at runtime
+- **User Preference Management**: Automatic save/restore of language choice
+- **Pluralization Support**: Handle plural forms for different languages
+- **RTL Support**: Automatic text direction handling
+- **Fallback Translations**: Graceful handling of missing translations
+- **Multiple UI Components**: Selector, dropdown, popup menu widgets

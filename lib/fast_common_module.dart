@@ -23,6 +23,11 @@ export 'src/user/mapper/fast_user_mapper.dart';
 
 // Localization
 export 'src/localization/localization_service.dart';
+export 'src/localization/fast_localization.dart';
+export 'src/localization/fast_localization_controller.dart';
+export 'src/localization/model/fast_language.dart';
+export 'src/localization/model/fast_translation.dart';
+export 'src/localization/widget/fast_language_selector.dart';
 
 // Common
 export 'src/common/model/fast_model.dart';
