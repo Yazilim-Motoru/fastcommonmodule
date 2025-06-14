@@ -1,11 +1,19 @@
 name: fast_common_module
 description: A common Flutter module for role permission authentication, base services, and microservices architecture with multilingual support.
-version: 1.0.4
+version: 1.0.5
 homepage: https://github.com/Yazilim-Motoru/fastcommonmodule
 repository: https://github.com/Yazilim-Motoru/fastcommonmodule.git
 issue_tracker: https://github.com/Yazilim-Motoru/fastcommonmodule/issues
 environment:
   sdk: ">=2.12.0 <4.0.0"
+  flutter: ">=2.5.0"
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  windows:
+  web:
 dependencies:
   flutter:
     sdk: flutter

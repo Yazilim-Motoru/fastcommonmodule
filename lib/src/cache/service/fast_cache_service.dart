@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 
 import '../model/fast_cache_item.dart';
@@ -50,8 +51,8 @@ class FastCacheService extends BaseCacheService {
   Future<void> initialize({String? diskCacheDir}) async {
     if (_isInitialized) return;
 
-    // Setup disk cache directory
-    if (config.enableDiskCache) {
+    // Setup disk cache directory (only on non-web platforms)
+    if (config.enableDiskCache && !kIsWeb) {
       _diskCacheDir = diskCacheDir ?? await _getDefaultCacheDir();
       final dir = Directory(_diskCacheDir!);
       if (!await dir.exists()) {
@@ -97,7 +98,7 @@ class FastCacheService extends BaseCacheService {
     }
 
     // Try disk cache
-    if (config.enableDiskCache && _diskCacheDir != null) {
+    if (config.enableDiskCache && _diskCacheDir != null && !kIsWeb) {
       final diskItem = await _getDiskCacheItem<T>(key);
       if (diskItem != null) {
         if (diskItem.isValid) {

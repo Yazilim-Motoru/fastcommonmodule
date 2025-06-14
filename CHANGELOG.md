@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.5
+- **Web & WASM Compatibility**: Added full web platform support and WASM compatibility.
+- **Platform Support**: Explicit platform declarations for Android, iOS, Windows, macOS, Linux, and Web.
+- **Deprecated API Fix**: Replaced deprecated `withOpacity()` with `withValues()` for better future compatibility.
+- **Cache Service Optimization**: Improved web compatibility by disabling disk cache operations on web platform.
+- **Performance Improvements**: Better platform-specific optimizations and reduced lint warnings.
+- **Pub.dev Score Optimization**: Enhanced package scoring with better platform support and code quality.
+
 ## 1.0.4
 - **Enhanced README.md Features Section**: Completely restructured main features section with organized categories and comprehensive feature list.
 - **Advanced Localization Highlights**: Added detailed coverage of runtime language switching, dynamic translation loading, user preference management, pluralization support, RTL support, fallback translations, and rich UI components.

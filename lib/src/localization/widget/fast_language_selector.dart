@@ -90,7 +90,7 @@ class _DefaultLanguageItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 2.0),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
               : null,
           border: isSelected
               ? Border.all(color: Theme.of(context).primaryColor)
