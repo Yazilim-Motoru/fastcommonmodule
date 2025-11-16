@@ -479,7 +479,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you find this package useful, please give it a ⭐ on GitHub!
 
-For questions and support, please open an issue on the [GitHub repository](https://github.com/fmustaficc/fast_common_module).
+For questions and support, please open an issue on the [GitHub repository](https://github.com/Yazilim-Motoru/fastcommonmodule).
 
 ---
 
