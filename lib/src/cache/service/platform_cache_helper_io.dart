@@ -1,10 +1,20 @@
 import 'dart:io';
-import 'package:path/path.dart' as path;
 
 /// IO implementation for native platforms
 class PlatformCacheHelper {
   static Future<String> getDefaultCacheDir() async {
-    return path.join(Directory.current.path, '.cache', 'fast_cache');
+    return joinPath(Directory.current.path, joinPath('.cache', 'fast_cache'));
+  }
+
+  static String joinPath(String p1, String p2) {
+    if (p1.endsWith(Platform.pathSeparator)) return '$p1$p2';
+    return '$p1${Platform.pathSeparator}$p2';
+  }
+
+  static String basenameWithoutExtension(String path) {
+    final name = path.split(Platform.pathSeparator).last;
+    final dotIndex = name.lastIndexOf('.');
+    return dotIndex > 0 ? name.substring(0, dotIndex) : name;
   }
 
   static Future<bool> directoryExists(String dirPath) async {

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'http/platform_http_helper.dart';
 
 import '../model/fast_response.dart';
 import '../../middleware/fast_middleware_manager.dart';
@@ -187,7 +187,6 @@ class FastApiClient {
     }
   }
 
-  /// Perform the actual HTTP request
   Future<FastResponse<T>> _performHttpRequest<T>(
     String method,
     String path, {
@@ -198,34 +197,14 @@ class FastApiClient {
     final uri = Uri.parse('$baseUrl$path');
     final mergedHeaders = await _buildHeaders(headers);
 
-    http.Response res;
+    final res = await PlatformHttpHelper.send(
+      method.toUpperCase(),
+      uri,
+      headers: mergedHeaders,
+      body: body != null ? jsonEncode(body) : null,
+    );
 
-    switch (method.toUpperCase()) {
-      case 'GET':
-        res = await http.get(uri, headers: mergedHeaders);
-        break;
-      case 'POST':
-        res = await http.post(
-          uri,
-          headers: mergedHeaders,
-          body: body != null ? jsonEncode(body) : null,
-        );
-        break;
-      case 'PUT':
-        res = await http.put(
-          uri,
-          headers: mergedHeaders,
-          body: body != null ? jsonEncode(body) : null,
-        );
-        break;
-      case 'DELETE':
-        res = await http.delete(uri, headers: mergedHeaders);
-        break;
-      default:
-        throw ArgumentError('Unsupported HTTP method: $method');
-    }
-
-    return _handleResponse<T>(res, fromJson);
+    return _handleResponse<T>(res.statusCode, res.body, fromJson);
   }
 
   Future<Map<String, String>> _buildHeaders(
@@ -242,10 +221,10 @@ class FastApiClient {
   }
 
   FastResponse<T> _handleResponse<T>(
-      http.Response res, T Function(dynamic)? fromJson) {
+      int statusCode, String responseBody, T Function(dynamic)? fromJson) {
     try {
-      final data = res.body.isNotEmpty ? jsonDecode(res.body) : null;
-      if (res.statusCode >= 200 && res.statusCode < 300) {
+      final data = responseBody.isNotEmpty ? jsonDecode(responseBody) : null;
+      if (statusCode >= 200 && statusCode < 300) {
         if (fromJson != null && data != null) {
           return FastResponse<T>.success(fromJson(data));
         } else {

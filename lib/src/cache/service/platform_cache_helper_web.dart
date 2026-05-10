@@ -4,6 +4,17 @@ class PlatformCacheHelper {
     return 'web_cache'; // Virtual path for web
   }
 
+  static String joinPath(String p1, String p2) {
+    if (p1.endsWith('/')) return '$p1$p2';
+    return '$p1/$p2';
+  }
+
+  static String basenameWithoutExtension(String path) {
+    final name = path.split('/').last;
+    final dotIndex = name.lastIndexOf('.');
+    return dotIndex > 0 ? name.substring(0, dotIndex) : name;
+  }
+
   static Future<bool> directoryExists(String path) async {
     return true; // Always exists on web (virtual)
   }

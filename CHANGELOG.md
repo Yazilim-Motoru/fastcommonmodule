@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7
+- **Zero-Dependency Architecture**: Completely removed `http` and `path` dependencies. The package is now 100% dependency-free while maintaining all previous features.
+- **Custom Cross-Platform HTTP Client**: Implemented a lightweight, conditional HTTP client (`PlatformHttpHelper`) using `dart:io` for native and `dart:js_interop` for Web, ensuring flawless WASM compatibility without external packages.
+- **Custom Path Management**: Integrated cross-platform path helpers directly into `PlatformCacheHelper`.
 ## 1.0.6
 - **Dependency Injection (DI)**: Added `FastLocator`, a lightweight built-in service locator and DI container.
 - **WASM Compatibility Fix**: Removed direct `dart:io` imports and implemented a conditional import structure (`PlatformCacheHelper`) for full WASM compatibility.

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as path;
 
 import '../model/fast_cache_item.dart';
 import '../model/fast_cache_config.dart';
@@ -257,7 +256,8 @@ class FastCacheService extends BaseCacheService {
         final paths =
             await PlatformCacheHelper.getCacheFilePaths(_diskCacheDir!);
         for (final filePath in paths) {
-          final fileName = path.basenameWithoutExtension(filePath);
+          final fileName =
+              PlatformCacheHelper.basenameWithoutExtension(filePath);
           final key = Uri.decodeComponent(fileName);
           keys.add(key);
         }
@@ -377,8 +377,8 @@ class FastCacheService extends BaseCacheService {
   }
 
   Future<void> _putDiskCache<T>(String key, FastCacheItem<T> item) async {
-    final filePath =
-        path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
+    final filePath = PlatformCacheHelper.joinPath(
+        _diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
 
     final data = {
       'key': item.key,
@@ -394,8 +394,8 @@ class FastCacheService extends BaseCacheService {
   }
 
   Future<FastCacheItem<T>?> _getDiskCacheItem<T>(String key) async {
-    final filePath =
-        path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
+    final filePath = PlatformCacheHelper.joinPath(
+        _diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
 
     final content = await PlatformCacheHelper.readFile(filePath);
     if (content == null) return null;
@@ -422,8 +422,8 @@ class FastCacheService extends BaseCacheService {
   }
 
   Future<bool> _removeDiskCacheItem(String key) async {
-    final filePath =
-        path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
+    final filePath = PlatformCacheHelper.joinPath(
+        _diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
     try {
       await PlatformCacheHelper.deleteFile(filePath);
       return true;
