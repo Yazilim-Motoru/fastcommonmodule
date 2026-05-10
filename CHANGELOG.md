@@ -1,12 +1,13 @@
 # Changelog
 
 ## 1.0.7
-- **Circuit Breaker System**: Implemented `FastCircuitBreaker`, a robust zero-dependency fault-tolerance mechanism. It prevents consecutive application failures by short-circuiting failing operations (fails fast) and gracefully handling recoveries using `closed`, `open`, and `halfOpen` states.
-- **Advanced Logging**: Introduced `FastLogger`, a zero-dependency advanced logging utility with colored console output, multiple log levels (debug, info, warning, error, wtf), and global callback support for integration with services like Crashlytics.
-- **Device & App Info**: Added `FastDeviceService`, `FastDeviceInfo`, and `FastAppInfo` to seamlessly fetch cross-platform hardware and software details without any external dependencies. Native environments use `dart:io` and Web environments use `dart:js_interop` to maintain perfect WASM compatibility.
-- **Zero-Dependency Architecture**: Completely removed `http` and `path` dependencies. The package is now 100% dependency-free while maintaining all previous features.
-- **Custom Cross-Platform HTTP Client**: Implemented a lightweight, conditional HTTP client (`PlatformHttpHelper`) using `dart:io` for native and `dart:js_interop` for Web, ensuring flawless WASM compatibility without external packages.
-- **Custom Path Management**: Integrated cross-platform path helpers directly into `PlatformCacheHelper`.
+- **Event Bus**: Added `FastEventBus` for component decoupling and event-driven communication.
+- **Circuit Breaker**: Added `FastCircuitBreaker` to handle fault tolerance with `closed`, `open`, and `halfOpen` states.
+- **Logging**: Added `FastLogger` utility with multiple log levels (debug, info, warning, error) and global callback support.
+- **Device & App Info**: Added `FastDeviceService` to retrieve hardware and software details across native and web platforms.
+- **Core Update**: Removed external `http` and `path` dependencies to improve package modularity.
+- **HTTP Client**: Replaced external HTTP client with internal native (`dart:io`) and web (`dart:js_interop`) implementations for broader platform support.
+- **Cache Service**: Refactored internal path management within `PlatformCacheHelper`.
 ## 1.0.6
 - **Dependency Injection (DI)**: Added `FastLocator`, a lightweight built-in service locator and DI container.
 - **WASM Compatibility Fix**: Removed direct `dart:io` imports and implemented a conditional import structure (`PlatformCacheHelper`) for full WASM compatibility.

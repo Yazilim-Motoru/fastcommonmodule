@@ -41,6 +41,7 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 - **Notification System:** `FastNotification` service for in-app messaging
 - **Device & App Info:** `FastDeviceService` for zero-dependency cross-platform hardware and software details
 - **Fault Tolerance:** `FastCircuitBreaker` for microservice resilience with customizable thresholds
+- **Event Bus / Pub-Sub:** `FastEventBus` for decoupling application components and enabling event-driven architecture
 - **Advanced Logging:** `FastLogger` with colored console output, log levels, and global callbacks
 - **File & Media Management:** `FastFileMeta` service for file upload/download operations
 - **Session Management:** `FastSession` service for user activity tracking
@@ -57,6 +58,7 @@ lib/
     common/           # Shared models, response, exception, base repository
     device/           # Cross-platform device and app info services
     di/               # Dependency injection container (FastLocator)
+    event_bus/        # Pub-Sub event bus system
     localization/     # Localization files and service
     logger/           # Advanced colored console logger
     middleware/       # HTTP middleware (logging, retry, timeout)
@@ -254,6 +256,33 @@ void configureCircuitBreaker() async {
     // A regular error from the block itself
     print('Failed: \$e');
   }
+}
+```
+
+## Event Bus (Pub-Sub) Example
+
+You can use `FastEventBus` to decouple components and let them communicate via events:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// 1. Define your event
+class UserLoggedInEvent {
+  final String username;
+  UserLoggedInEvent(this.username);
+}
+
+void eventBusDemo() {
+  // 2. Listen for the event (e.g., inside a Widget or ViewModel)
+  final subscription = FastEventBus.instance.on<UserLoggedInEvent>().listen((event) {
+    print('Welcome \${event.username}!');
+  });
+
+  // 3. Fire the event from anywhere in your app
+  FastEventBus.instance.fire(UserLoggedInEvent('yazilimmotoru'));
+
+  // Don't forget to cancel subscriptions when they are no longer needed
+  // subscription.cancel();
 }
 ```
 

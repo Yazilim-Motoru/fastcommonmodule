@@ -99,5 +99,8 @@ export 'src/circuit_breaker/model/fast_circuit_breaker_config.dart';
 export 'src/circuit_breaker/model/fast_circuit_breaker_exception.dart';
 export 'src/circuit_breaker/service/fast_circuit_breaker.dart';
 
+// Event Bus
+export 'src/event_bus/service/fast_event_bus.dart';
+
 // DI
 export 'src/di/fast_locator.dart';

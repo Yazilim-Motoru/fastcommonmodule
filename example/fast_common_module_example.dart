@@ -27,6 +27,9 @@ void main() async {
 
   // Example 7: FastCircuitBreaker
   await circuitBreakerExample();
+
+  // Example 8: FastEventBus
+  await eventBusExample();
 }
 
 /// Example of user management with roles and permissions
@@ -314,6 +317,36 @@ Future<void> circuitBreakerExample() async {
   } catch (e) {
     print('Caught: $e');
   }
+
+  print('');
+}
+
+/// A simple event class for demonstration
+class UserLoggedInEvent {
+  final String username;
+  UserLoggedInEvent(this.username);
+}
+
+/// Example of FastEventBus usage
+Future<void> eventBusExample() async {
+  print('=== FastEventBus Example ===');
+
+  // 1. Subscribe to an event (usually done in a widget's initState or a controller)
+  final subscription =
+      FastEventBus.instance.on<UserLoggedInEvent>().listen((event) {
+    FastLogger.i('Event Received! Welcome, \${event.username}',
+        tag: 'EventBus');
+  });
+
+  // 2. Fire the event from anywhere else in the app
+  print('Firing UserLoggedInEvent...');
+  FastEventBus.instance.fire(UserLoggedInEvent('yazilimmotoru'));
+
+  // Wait a moment for the async stream to process the event
+  await Future.delayed(const Duration(milliseconds: 100));
+
+  // 3. Clean up the subscription (usually done in dispose)
+  await subscription.cancel();
 
   print('');
   print('=== FastCommonModule Demo Complete ===');
