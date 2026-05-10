@@ -21,6 +21,9 @@ void main() async {
 
   // Example 5: Device & App Info
   await deviceExample();
+
+  // Example 6: FastLogger
+  await loggerExample();
 }
 
 /// Example of user management with roles and permissions
@@ -228,6 +231,33 @@ Future<void> deviceExample() async {
   print('Is Web: ${device.isWeb}');
   print('Device ID: ${device.deviceId}');
   print('App Name: ${app.appName} (v${app.version}+${app.buildNumber})');
+
+  print('');
+}
+
+/// Example of FastLogger usage
+Future<void> loggerExample() async {
+  print('=== FastLogger Example ===');
+
+  // Configure global callback (e.g. for Crashlytics)
+  FastLogger.onLog = (logMessage) {
+    if (logMessage.level == FastLogLevel.error ||
+        logMessage.level == FastLogLevel.wtf) {
+      // Send to Crashlytics
+      // FirebaseCrashlytics.instance.recordError(logMessage.error, logMessage.stackTrace);
+    }
+  };
+
+  FastLogger.d('This is a debug message', tag: 'Auth');
+  FastLogger.i('User successfully logged in', tag: 'Auth');
+  FastLogger.w('API request took longer than expected', tag: 'Network');
+
+  try {
+    throw Exception('Connection Refused');
+  } catch (e, st) {
+    FastLogger.e('Failed to load user profile',
+        error: e, stackTrace: st, tag: 'Profile');
+  }
 
   print('');
   print('=== FastCommonModule Demo Complete ===');

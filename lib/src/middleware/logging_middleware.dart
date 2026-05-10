@@ -1,4 +1,5 @@
 import '../common/model/fast_response.dart';
+import '../logger/service/fast_logger.dart';
 import 'base_middleware.dart';
 
 /// Logging middleware for request/response logging
@@ -123,9 +124,19 @@ class LoggingMiddleware extends BaseMiddleware {
     if (logger != null) {
       logger!(message, level);
     } else {
-      final timestamp = DateTime.now().toIso8601String();
-      // ignore: avoid_print
-      print('[$timestamp] [$level] $message');
+      switch (level.toUpperCase()) {
+        case 'INFO':
+          FastLogger.i(message, tag: 'API');
+          break;
+        case 'ERROR':
+          FastLogger.e(message, tag: 'API');
+          break;
+        case 'WARNING':
+          FastLogger.w(message, tag: 'API');
+          break;
+        default:
+          FastLogger.d(message, tag: 'API');
+      }
     }
   }
 }

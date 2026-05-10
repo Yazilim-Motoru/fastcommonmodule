@@ -40,6 +40,7 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 - **Audit & Logging:** `FastAuditLog` for tracking user actions and system events
 - **Notification System:** `FastNotification` service for in-app messaging
 - **Device & App Info:** `FastDeviceService` for zero-dependency cross-platform hardware and software details
+- **Advanced Logging:** `FastLogger` with colored console output, log levels, and global callbacks
 - **File & Media Management:** `FastFileMeta` service for file upload/download operations
 - **Session Management:** `FastSession` service for user activity tracking
 - **Settings & Configuration:** `FastSetting` service for app configuration management
@@ -181,6 +182,37 @@ void logDeviceInfo() {
   print('Running on ${device.os} version ${device.osVersion}');
   print('Is Web? ${device.isWeb}');
   print('Language: ${device.language}');
+}
+```
+
+## Advanced Logging Example
+
+You can use `FastLogger` for zero-dependency, advanced logging with colored console outputs, severity levels, and external integrations (like Crashlytics):
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+void configureLogger() {
+  // Set minimum severity level (e.g. only show warnings and errors in production)
+  FastLogger.minLevel = FastLogLevel.debug;
+
+  // Configure a global callback to catch errors and send them to Crashlytics
+  FastLogger.onLog = (logMessage) {
+    if (logMessage.level == FastLogLevel.error || logMessage.level == FastLogLevel.wtf) {
+      // e.g., FirebaseCrashlytics.instance.recordError(logMessage.error, logMessage.stackTrace);
+    }
+  };
+
+  // Usage:
+  FastLogger.d('This is a debug message', tag: 'Auth');
+  FastLogger.i('User successfully logged in', tag: 'Auth');
+  FastLogger.w('API request took longer than expected', tag: 'Network');
+  
+  try {
+    throw Exception('Connection Refused');
+  } catch (e, st) {
+    FastLogger.e('Failed to load profile', error: e, stackTrace: st, tag: 'Profile');
+  }
 }
 ```
 

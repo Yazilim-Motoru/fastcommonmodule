@@ -88,5 +88,10 @@ export 'src/device/model/fast_device_info.dart';
 export 'src/device/model/fast_app_info.dart';
 export 'src/device/service/fast_device_service.dart';
 
+// Logger
+export 'src/logger/enums/fast_log_level.dart';
+export 'src/logger/model/fast_log_message.dart';
+export 'src/logger/service/fast_logger.dart';
+
 // DI
 export 'src/di/fast_locator.dart';
