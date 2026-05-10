@@ -12,7 +12,7 @@ class PlatformCacheHelper {
     throw UnsupportedError('Platform not supported');
   }
 
-  static Future<List<dynamic>> listFiles(String path) async {
+  static Future<List<String>> getCacheFilePaths(String path) async {
     return [];
   }
 

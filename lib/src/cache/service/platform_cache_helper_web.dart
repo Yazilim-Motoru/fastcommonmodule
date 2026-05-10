@@ -12,8 +12,7 @@ class PlatformCacheHelper {
     // No-op on web
   }
 
-  static Future<List<dynamic>> listFiles(String path) async {
-    // For web, we could use localStorage keys, but for now return empty
+  static Future<List<String>> getCacheFilePaths(String path) async {
     return [];
   }
 

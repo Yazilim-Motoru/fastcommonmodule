@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.6
+- **Dependency Injection (DI)**: Added `FastLocator`, a lightweight built-in service locator and DI container.
+- **WASM Compatibility Fix**: Removed direct `dart:io` imports and implemented a conditional import structure (`PlatformCacheHelper`) for full WASM compatibility.
 ## 1.0.5
 - **Web & WASM Compatibility**: Added full web platform support and WASM compatibility.
 - **Platform Support**: Explicit platform declarations for Android, iOS, Windows, macOS, Linux, and Web.

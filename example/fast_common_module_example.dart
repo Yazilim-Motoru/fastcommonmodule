@@ -15,6 +15,9 @@ void main() async {
 
   // Example 3: Basic Models Demo
   await modelsExample();
+
+  // Example 4: Dependency Injection
+  await diExample();
 }
 
 /// Example of user management with roles and permissions
@@ -157,6 +160,42 @@ Future<void> modelsExample() async {
 
   print('Notification: ${notification.title} - ${notification.message}');
   print('Type: ${notification.type}, Read: ${notification.isRead}');
+
+  print('');
+}
+
+/// Example of Dependency Injection (Service Locator)
+Future<void> diExample() async {
+  print('=== Dependency Injection (DI) Example ===');
+
+  // Register a singleton (e.g., API client)
+  final apiClient = FastApiClient(baseUrl: 'https://api.example.com');
+  FastLocator.instance.registerSingleton<FastApiClient>(apiClient);
+
+  // Register a factory (e.g., creating a new object every time)
+  FastLocator.instance.registerFactory<FastUser>(() {
+    return FastUser(
+      id: 'dynamic-1',
+      username: 'dynamicUser',
+      email: 'test@test.com',
+      roles: [],
+    );
+  });
+
+  // Access registered dependencies from anywhere
+  final resolvedClient = locate<FastApiClient>();
+  print('Resolved API Client: ${resolvedClient.baseUrl}');
+
+  final resolvedUser1 = locate<FastUser>();
+  final resolvedUser2 = locate<FastUser>();
+
+  // They are different instances because FastUser is registered as a factory
+  print('User 1 Hash: ${resolvedUser1.hashCode}');
+  print('User 2 Hash: ${resolvedUser2.hashCode}');
+  print('Are they same instance? ${identical(resolvedUser1, resolvedUser2)}');
+
+  // Clear DI container
+  FastLocator.instance.reset();
 
   print('');
   print('=== FastCommonModule Demo Complete ===');

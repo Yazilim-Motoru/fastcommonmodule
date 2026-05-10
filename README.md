@@ -33,14 +33,15 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 - **Pagination & Filtering:** FastPage and FastFilter models for data pagination
 
 ### 🔧 **Utilities & Services**
-- **High-Performance Caching:** FastCacheService with memory/disk storage, automatic expiration, and multiple eviction policies
-- **Rate Limiting & Throttling:** FastRateLimitService with brute-force protection, multiple algorithms, and progressive penalties
-- **Validation & Forms:** FastValidator with comprehensive validation rules
-- **Audit & Logging:** FastAuditLog for tracking user actions and system events
-- **Notification System:** FastNotification service for in-app messaging
-- **File & Media Management:** FastFileMeta service for file upload/download operations
-- **Session Management:** FastSession service for user activity tracking
-- **Settings & Configuration:** FastSetting service for app configuration management
+- **Dependency Injection:** Built-in `FastLocator` for lightweight, dependency-free service location and injection
+- **High-Performance Caching:** `FastCacheService` with memory/disk storage, automatic expiration, and multiple eviction policies
+- **Rate Limiting & Throttling:** `FastRateLimitService` with brute-force protection, multiple algorithms, and progressive penalties
+- **Validation & Forms:** `FastValidator` with comprehensive validation rules
+- **Audit & Logging:** `FastAuditLog` for tracking user actions and system events
+- **Notification System:** `FastNotification` service for in-app messaging
+- **File & Media Management:** `FastFileMeta` service for file upload/download operations
+- **Session Management:** `FastSession` service for user activity tracking
+- **Settings & Configuration:** `FastSetting` service for app configuration management
 
 ## Folder Structure
 ```
@@ -122,6 +123,36 @@ void main() async {
     meta: {'ip': '127.0.0.1'},
   );
   await auditLogService.writeLog(log);
+}
+```
+
+## Dependency Injection (Service Locator) Example
+
+FastCommonModule includes a built-in, lightweight Service Locator that eliminates the need for external packages like `get_it`.
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+// 1. Register dependencies
+void setupDependencies() {
+  // Register a singleton (created once)
+  FastLocator.instance.registerSingleton<FastApiClient>(
+    FastApiClient(baseUrl: 'https://api.example.com')
+  );
+
+  // Register a factory (created every time it's requested)
+  FastLocator.instance.registerFactory<FastUser>(() {
+    return FastUser(id: '1', username: 'guest', email: '', roles: []);
+  });
+}
+
+// 2. Use dependencies anywhere in your app
+void performAction() {
+  // Use the global 'locate' helper function
+  final apiClient = locate<FastApiClient>();
+  
+  // Or use the instance directly
+  final user = FastLocator.instance.get<FastUser>();
 }
 ```
 

@@ -153,7 +153,7 @@ class FastLanguageDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<FastLanguage>(
-      value: controller.currentLanguage,
+      initialValue: controller.currentLanguage,
       decoration: decoration ?? const InputDecoration(),
       hint: hint != null ? Text(hint!) : null,
       items: controller.availableLanguages.map((language) {

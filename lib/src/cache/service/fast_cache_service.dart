@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
@@ -9,6 +8,7 @@ import '../model/fast_cache_item.dart';
 import '../model/fast_cache_config.dart';
 import '../model/fast_cache_statistics.dart';
 import 'base_cache_service.dart';
+import 'platform_cache_helper.dart';
 
 /// High-performance caching service with memory and disk storage layers
 ///
@@ -54,9 +54,8 @@ class FastCacheService extends BaseCacheService {
     // Setup disk cache directory (only on non-web platforms)
     if (config.enableDiskCache && !kIsWeb) {
       _diskCacheDir = diskCacheDir ?? await _getDefaultCacheDir();
-      final dir = Directory(_diskCacheDir!);
-      if (!await dir.exists()) {
-        await dir.create(recursive: true);
+      if (!await PlatformCacheHelper.directoryExists(_diskCacheDir!)) {
+        await PlatformCacheHelper.createDirectory(_diskCacheDir!);
       }
     }
 
@@ -194,15 +193,14 @@ class FastCacheService extends BaseCacheService {
 
     // Clear disk cache
     if (config.enableDiskCache && _diskCacheDir != null) {
-      final dir = Directory(_diskCacheDir!);
-      if (await dir.exists()) {
-        await for (final entity in dir.list()) {
-          if (entity is File && entity.path.endsWith('.cache')) {
-            try {
-              await entity.delete();
-            } catch (e) {
-              // Ignore deletion errors
-            }
+      if (await PlatformCacheHelper.directoryExists(_diskCacheDir!)) {
+        final paths =
+            await PlatformCacheHelper.getCacheFilePaths(_diskCacheDir!);
+        for (final filePath in paths) {
+          try {
+            await PlatformCacheHelper.deleteFile(filePath);
+          } catch (e) {
+            // Ignore deletion errors
           }
         }
       }
@@ -255,14 +253,13 @@ class FastCacheService extends BaseCacheService {
 
     // Add disk cache keys
     if (config.enableDiskCache && _diskCacheDir != null) {
-      final dir = Directory(_diskCacheDir!);
-      if (await dir.exists()) {
-        await for (final entity in dir.list()) {
-          if (entity is File && entity.path.endsWith('.cache')) {
-            final fileName = path.basenameWithoutExtension(entity.path);
-            final key = Uri.decodeComponent(fileName);
-            keys.add(key);
-          }
+      if (await PlatformCacheHelper.directoryExists(_diskCacheDir!)) {
+        final paths =
+            await PlatformCacheHelper.getCacheFilePaths(_diskCacheDir!);
+        for (final filePath in paths) {
+          final fileName = path.basenameWithoutExtension(filePath);
+          final key = Uri.decodeComponent(fileName);
+          keys.add(key);
         }
       }
     }
@@ -299,27 +296,27 @@ class FastCacheService extends BaseCacheService {
 
     // Cleanup disk cache
     if (config.enableDiskCache && _diskCacheDir != null) {
-      final dir = Directory(_diskCacheDir!);
-      if (await dir.exists()) {
-        await for (final entity in dir.list()) {
-          if (entity is File && entity.path.endsWith('.cache')) {
-            try {
-              final content = await entity.readAsString();
-              final json = jsonDecode(content) as Map<String, dynamic>;
-              final expiresAtStr = json['expiresAt'] as String?;
+      if (await PlatformCacheHelper.directoryExists(_diskCacheDir!)) {
+        final paths =
+            await PlatformCacheHelper.getCacheFilePaths(_diskCacheDir!);
+        for (final filePath in paths) {
+          try {
+            final content = await PlatformCacheHelper.readFile(filePath);
+            if (content == null) continue;
+            final json = jsonDecode(content) as Map<String, dynamic>;
+            final expiresAtStr = json['expiresAt'] as String?;
 
-              if (expiresAtStr != null) {
-                final expiresAt = DateTime.parse(expiresAtStr);
-                if (DateTime.now().isAfter(expiresAt)) {
-                  await entity.delete();
-                  removedCount++;
-                }
+            if (expiresAtStr != null) {
+              final expiresAt = DateTime.parse(expiresAtStr);
+              if (DateTime.now().isAfter(expiresAt)) {
+                await PlatformCacheHelper.deleteFile(filePath);
+                removedCount++;
               }
-            } catch (e) {
-              // If we can't read the file, consider it corrupted and remove it
-              await entity.delete();
-              removedCount++;
             }
+          } catch (e) {
+            // If we can't read the file, consider it corrupted and remove it
+            await PlatformCacheHelper.deleteFile(filePath);
+            removedCount++;
           }
         }
       }
@@ -359,9 +356,7 @@ class FastCacheService extends BaseCacheService {
   }
 
   Future<String> _getDefaultCacheDir() async {
-    // This is a simplified implementation
-    // In a real app, you might use path_provider package
-    return path.join(Directory.current.path, '.cache', 'fast_cache');
+    return await PlatformCacheHelper.getDefaultCacheDir();
   }
 
   void _startCleanupTimer() {
@@ -382,8 +377,8 @@ class FastCacheService extends BaseCacheService {
   }
 
   Future<void> _putDiskCache<T>(String key, FastCacheItem<T> item) async {
-    final file =
-        File(path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache'));
+    final filePath =
+        path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
 
     final data = {
       'key': item.key,
@@ -395,17 +390,17 @@ class FastCacheService extends BaseCacheService {
       'metadata': item.metadata,
     };
 
-    await file.writeAsString(jsonEncode(data));
+    await PlatformCacheHelper.writeFile(filePath, jsonEncode(data));
   }
 
   Future<FastCacheItem<T>?> _getDiskCacheItem<T>(String key) async {
-    final file =
-        File(path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache'));
+    final filePath =
+        path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
 
-    if (!await file.exists()) return null;
+    final content = await PlatformCacheHelper.readFile(filePath);
+    if (content == null) return null;
 
     try {
-      final content = await file.readAsString();
       final json = jsonDecode(content) as Map<String, dynamic>;
 
       return FastCacheItem<T>(
@@ -421,25 +416,20 @@ class FastCacheService extends BaseCacheService {
       );
     } catch (e) {
       // If we can't read the file, remove it
-      await file.delete();
+      await PlatformCacheHelper.deleteFile(filePath);
       return null;
     }
   }
 
   Future<bool> _removeDiskCacheItem(String key) async {
-    final file =
-        File(path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache'));
-
-    if (await file.exists()) {
-      try {
-        await file.delete();
-        return true;
-      } catch (e) {
-        return false;
-      }
+    final filePath =
+        path.join(_diskCacheDir!, '${Uri.encodeComponent(key)}.cache');
+    try {
+      await PlatformCacheHelper.deleteFile(filePath);
+      return true;
+    } catch (e) {
+      return false;
     }
-
-    return false;
   }
 
   Future<void> _evictMemoryItems(int count) async {

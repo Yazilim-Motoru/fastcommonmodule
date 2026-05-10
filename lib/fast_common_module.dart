@@ -82,3 +82,6 @@ export 'src/middleware/timeout_middleware.dart';
 // Utils
 export 'src/utils/helpers.dart';
 export 'src/utils/fast_validator.dart';
+
+// DI
+export 'src/di/fast_locator.dart';

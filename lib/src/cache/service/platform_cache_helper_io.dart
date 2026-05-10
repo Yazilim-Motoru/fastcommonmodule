@@ -15,9 +15,15 @@ class PlatformCacheHelper {
     await Directory(dirPath).create(recursive: true);
   }
 
-  static Future<List<FileSystemEntity>> listFiles(String dirPath) async {
+  static Future<List<String>> getCacheFilePaths(String dirPath) async {
     final dir = Directory(dirPath);
-    return dir.list().toList();
+    if (!await dir.exists()) return [];
+    final entities = dir.listSync();
+    return entities
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.cache'))
+        .map((file) => file.path)
+        .toList();
   }
 
   static Future<String?> readFile(String filePath) async {
