@@ -93,5 +93,11 @@ export 'src/logger/enums/fast_log_level.dart';
 export 'src/logger/model/fast_log_message.dart';
 export 'src/logger/service/fast_logger.dart';
 
+// Circuit Breaker
+export 'src/circuit_breaker/enums/fast_circuit_breaker_state.dart';
+export 'src/circuit_breaker/model/fast_circuit_breaker_config.dart';
+export 'src/circuit_breaker/model/fast_circuit_breaker_exception.dart';
+export 'src/circuit_breaker/service/fast_circuit_breaker.dart';
+
 // DI
 export 'src/di/fast_locator.dart';

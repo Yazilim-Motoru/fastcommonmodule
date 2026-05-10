@@ -40,6 +40,7 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 - **Audit & Logging:** `FastAuditLog` for tracking user actions and system events
 - **Notification System:** `FastNotification` service for in-app messaging
 - **Device & App Info:** `FastDeviceService` for zero-dependency cross-platform hardware and software details
+- **Fault Tolerance:** `FastCircuitBreaker` for microservice resilience with customizable thresholds
 - **Advanced Logging:** `FastLogger` with colored console output, log levels, and global callbacks
 - **File & Media Management:** `FastFileMeta` service for file upload/download operations
 - **Session Management:** `FastSession` service for user activity tracking
@@ -50,16 +51,21 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 lib/
   fast_common_module.dart
   src/
-    auth/           # Authentication and token services
-    cache/          # High-performance caching with memory/disk storage
-    common/         # Shared models, response, exception, base repository
-    localization/   # Localization files and service
-    permission/     # Permission models, services
-    rate_limit/     # Rate limiting and throttling services
-    role/           # Role models, services
-    tenant/         # Tenant models, services
-    user/           # User models, services
-    utils/          # Helper functions
+    auth/             # Authentication and token services
+    cache/            # High-performance caching with memory/disk storage
+    circuit_breaker/  # Circuit breaker and fault tolerance patterns
+    common/           # Shared models, response, exception, base repository
+    device/           # Cross-platform device and app info services
+    di/               # Dependency injection container (FastLocator)
+    localization/     # Localization files and service
+    logger/           # Advanced colored console logger
+    middleware/       # HTTP middleware (logging, retry, timeout)
+    permission/       # Permission models, services
+    rate_limit/       # Rate limiting and throttling services
+    role/             # Role models, services
+    tenant/           # Tenant models, services
+    user/             # User models, services
+    utils/            # Helper functions and validators
 ```
 
 ## Quick Start
@@ -212,6 +218,41 @@ void configureLogger() {
     throw Exception('Connection Refused');
   } catch (e, st) {
     FastLogger.e('Failed to load profile', error: e, stackTrace: st, tag: 'Profile');
+  }
+}
+```
+
+## Circuit Breaker Example
+
+You can use `FastCircuitBreaker` to prevent continuous application failures when external services are down. It implements a zero-dependency fault tolerance mechanism:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+void configureCircuitBreaker() async {
+  final circuitBreaker = FastCircuitBreaker(
+    config: const FastCircuitBreakerConfig(
+      failureThreshold: 3, // Open circuit after 3 consecutive failures
+      resetTimeout: Duration(seconds: 10), // Try again after 10 seconds (Half-Open)
+    ),
+    onStateChanged: (from, to) {
+      FastLogger.w('Circuit State Changed: ${from.name} -> ${to.name}');
+    },
+  );
+
+  // Wrap any async API call or logic
+  try {
+    final result = await circuitBreaker.execute(() async {
+      // Your risky network call goes here
+      // return await apiClient.get('/data');
+      throw Exception('Server is down!');
+    });
+  } on FastCircuitBreakerException catch (e) {
+    // The circuit is OPEN. Fails fast without executing the block.
+    print('Request blocked: \${e.message}');
+  } catch (e) {
+    // A regular error from the block itself
+    print('Failed: \$e');
   }
 }
 ```

@@ -24,6 +24,9 @@ void main() async {
 
   // Example 6: FastLogger
   await loggerExample();
+
+  // Example 7: FastCircuitBreaker
+  await circuitBreakerExample();
 }
 
 /// Example of user management with roles and permissions
@@ -257,6 +260,59 @@ Future<void> loggerExample() async {
   } catch (e, st) {
     FastLogger.e('Failed to load user profile',
         error: e, stackTrace: st, tag: 'Profile');
+  }
+
+  print('');
+}
+
+/// Example of FastCircuitBreaker usage
+Future<void> circuitBreakerExample() async {
+  print('=== FastCircuitBreaker Example ===');
+
+  final circuitBreaker = FastCircuitBreaker(
+    config: const FastCircuitBreakerConfig(
+      failureThreshold: 2, // Open after 2 failures
+      resetTimeout: Duration(seconds: 2), // Try half-open after 2 seconds
+    ),
+    onStateChanged: (from, to) {
+      FastLogger.w('Circuit State Changed: ${from.name} -> ${to.name}',
+          tag: 'Circuit');
+    },
+  );
+
+  // A simulated API call that always fails initially
+  Future<String> failingApiCall() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    throw Exception('Server Timeout');
+  }
+
+  // A simulated API call that succeeds
+  Future<String> successfulApiCall() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    return 'Server Data';
+  }
+
+  // 1. Try failing requests
+  for (int i = 1; i <= 3; i++) {
+    try {
+      print('Attempt $i...');
+      await circuitBreaker.execute(failingApiCall);
+    } catch (e) {
+      print('Caught: $e');
+    }
+  }
+
+  // 2. Wait for reset timeout
+  print('Waiting 3 seconds for circuit to transition to half-open...');
+  await Future.delayed(const Duration(seconds: 3));
+
+  // 3. Try successful request (Circuit should transition halfOpen -> closed)
+  try {
+    print('Attempting successful call...');
+    final result = await circuitBreaker.execute(successfulApiCall);
+    print('Result: $result');
+  } catch (e) {
+    print('Caught: $e');
   }
 
   print('');

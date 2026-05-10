@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.0.7
+- **Circuit Breaker System**: Implemented `FastCircuitBreaker`, a robust zero-dependency fault-tolerance mechanism. It prevents consecutive application failures by short-circuiting failing operations (fails fast) and gracefully handling recoveries using `closed`, `open`, and `halfOpen` states.
 - **Advanced Logging**: Introduced `FastLogger`, a zero-dependency advanced logging utility with colored console output, multiple log levels (debug, info, warning, error, wtf), and global callback support for integration with services like Crashlytics.
 - **Device & App Info**: Added `FastDeviceService`, `FastDeviceInfo`, and `FastAppInfo` to seamlessly fetch cross-platform hardware and software details without any external dependencies. Native environments use `dart:io` and Web environments use `dart:js_interop` to maintain perfect WASM compatibility.
 - **Zero-Dependency Architecture**: Completely removed `http` and `path` dependencies. The package is now 100% dependency-free while maintaining all previous features.
