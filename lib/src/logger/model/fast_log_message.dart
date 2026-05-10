@@ -1,4 +1,4 @@
-import 'fast_log_level.dart';
+import '../enums/fast_log_level.dart';
 
 /// Represents a single log entry created by FastLogger
 class FastLogMessage {
@@ -31,7 +31,7 @@ class FastLogMessage {
 
   Map<String, dynamic> toJson() {
     return {
-      'level': level.name,
+      'level': level.toString().split('.').last,
       'message': message,
       'timestamp': timestamp.toIso8601String(),
       if (error != null) 'error': error.toString(),
@@ -43,6 +43,7 @@ class FastLogMessage {
   @override
   String toString() {
     final tagStr = tag != null ? '[$tag] ' : '';
-    return '[$timestamp] [${level.name.toUpperCase()}] $tagStr$message';
+    final levelStr = level.toString().split('.').last.toUpperCase();
+    return '[$timestamp] [$levelStr] $tagStr$message';
   }
 }

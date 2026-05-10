@@ -3,6 +3,17 @@ import '../../role/model/fast_role.dart';
 
 /// Model representing a user in FastCommonModule.
 class FastUser extends FastModel {
+  /// Creates a [FastUser] instance.
+  const FastUser({
+    required String id,
+    required this.username,
+    required this.email,
+    required this.roles,
+    this.phone,
+    this.profileImageUrl,
+    this.extra,
+  }) : super(id: id);
+
   /// Username or display name (required).
   final String username;
 
@@ -20,17 +31,6 @@ class FastUser extends FastModel {
 
   /// Optional extra data for extensibility.
   final Map<String, dynamic>? extra;
-
-  /// Creates a [FastUser] instance.
-  const FastUser({
-    required String id,
-    required this.username,
-    required this.email,
-    required this.roles,
-    this.phone,
-    this.profileImageUrl,
-    this.extra,
-  }) : super(id: id);
 
   /// Creates a [FastUser] from a JSON map.
   static FastUser fromJson(Map<String, dynamic> json) => FastUser(

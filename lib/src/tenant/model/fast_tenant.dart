@@ -2,6 +2,14 @@ import '../../common/model/fast_model.dart';
 
 /// FastTenant represents a tenant (organization/customer) in a multi-tenant system.
 class FastTenant extends FastModel {
+  /// Creates a [FastTenant] instance.
+  const FastTenant({
+    required String id,
+    required this.name,
+    this.description,
+    this.extra,
+  }) : super(id: id);
+
   /// Tenant display name.
   final String name;
 
@@ -10,14 +18,6 @@ class FastTenant extends FastModel {
 
   /// Optional extra data for extensibility.
   final Map<String, dynamic>? extra;
-
-  /// Creates a [FastTenant] instance.
-  const FastTenant({
-    required String id,
-    required this.name,
-    this.description,
-    this.extra,
-  }) : super(id: id);
 
   /// Creates a [FastTenant] from JSON.
   factory FastTenant.fromJson(Map<String, dynamic> json) => FastTenant(

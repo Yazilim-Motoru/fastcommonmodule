@@ -5,6 +5,9 @@ import '../model/fast_log_message.dart';
 /// A zero-dependency, advanced logging utility.
 /// Provides colored console output, log levels, and global callbacks for external crashlytics/monitoring tools.
 class FastLogger {
+  /// Prevent instantiation since this is a static utility.
+  FastLogger._();
+
   /// ANSI Color Codes for console output
   static const String _reset = '\x1B[0m';
   static const String _gray = '\x1B[90m';
@@ -23,11 +26,6 @@ class FastLogger {
   /// Global callback for log messages.
   /// Useful for integrating Firebase Crashlytics, Sentry, or custom remote logging.
   static void Function(FastLogMessage logMessage)? onLog;
-
-  /// Prevent instantiation since this is a static utility.
-  FastLogger._();
-
-  /// Log a detailed debugging message.
   static void d(String message, {String? tag}) {
     _log(FastLogLevel.debug, message, tag: tag);
   }
@@ -90,8 +88,8 @@ class FastLogger {
     final timeStr = _formatTime(logMessage.timestamp);
 
     // Print Header
-    _printSafely(
-        '$color[$timeStr] [${level.name.toUpperCase()}] $tagStr$message$_reset');
+    final levelStr = level.toString().split('.').last.toUpperCase();
+    _printSafely('$color[$timeStr] [$levelStr] $tagStr$message$_reset');
 
     // Print Error if exists
     if (error != null) {
