@@ -83,5 +83,10 @@ export 'src/middleware/timeout_middleware.dart';
 export 'src/utils/helpers.dart';
 export 'src/utils/fast_validator.dart';
 
+// Device & App Info
+export 'src/device/model/fast_device_info.dart';
+export 'src/device/model/fast_app_info.dart';
+export 'src/device/service/fast_device_service.dart';
+
 // DI
 export 'src/di/fast_locator.dart';

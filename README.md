@@ -39,6 +39,7 @@ A modular, enterprise-ready Flutter common module for microservice architectures
 - **Validation & Forms:** `FastValidator` with comprehensive validation rules
 - **Audit & Logging:** `FastAuditLog` for tracking user actions and system events
 - **Notification System:** `FastNotification` service for in-app messaging
+- **Device & App Info:** `FastDeviceService` for zero-dependency cross-platform hardware and software details
 - **File & Media Management:** `FastFileMeta` service for file upload/download operations
 - **Session Management:** `FastSession` service for user activity tracking
 - **Settings & Configuration:** `FastSetting` service for app configuration management
@@ -153,6 +154,33 @@ void performAction() {
   
   // Or use the instance directly
   final user = FastLocator.instance.get<FastUser>();
+}
+```
+
+## Device & App Info Example
+
+You can retrieve cross-platform device and application information without any external dependencies:
+
+```dart
+import 'package:fast_common_module/fast_common_module.dart';
+
+void logDeviceInfo() {
+  final deviceService = FastDeviceService();
+  
+  // Optionally initialize with your app's specific info
+  deviceService.initialize(
+    appInfo: const FastAppInfo(
+      appName: 'My Super App',
+      packageName: 'com.example.superapp',
+      version: '1.2.0',
+      buildNumber: '42',
+    ),
+  );
+
+  final device = deviceService.getDeviceInfo();
+  print('Running on ${device.os} version ${device.osVersion}');
+  print('Is Web? ${device.isWeb}');
+  print('Language: ${device.language}');
 }
 ```
 

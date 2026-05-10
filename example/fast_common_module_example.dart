@@ -18,6 +18,9 @@ void main() async {
 
   // Example 4: Dependency Injection
   await diExample();
+
+  // Example 5: Device & App Info
+  await deviceExample();
 }
 
 /// Example of user management with roles and permissions
@@ -196,6 +199,35 @@ Future<void> diExample() async {
 
   // Clear DI container
   FastLocator.instance.reset();
+
+  print('');
+}
+
+/// Example of Device & App Info
+Future<void> deviceExample() async {
+  print('=== Device & App Info Example ===');
+
+  final deviceService = FastDeviceService();
+
+  // Optionally initialize with app info
+  deviceService.initialize(
+    appInfo: const FastAppInfo(
+      appName: 'Demo App',
+      packageName: 'com.example.demo',
+      version: '1.0.0',
+      buildNumber: '100',
+    ),
+  );
+
+  final device = deviceService.getDeviceInfo();
+  final app = deviceService.getAppInfo();
+
+  print('Device OS: ${device.os} ${device.osVersion}');
+  print('Processors: ${device.processorCount}');
+  print('Language: ${device.language}');
+  print('Is Web: ${device.isWeb}');
+  print('Device ID: ${device.deviceId}');
+  print('App Name: ${app.appName} (v${app.version}+${app.buildNumber})');
 
   print('');
   print('=== FastCommonModule Demo Complete ===');
