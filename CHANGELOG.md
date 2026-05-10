@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.8
+- **Fix**: Resolved `curly_braces_in_flow_control_structures` lint warning in the web implementation of `FastDeviceService`.
+
 ## 1.0.7
 - **Event Bus**: Added `FastEventBus` for component decoupling and event-driven communication.
 - **Circuit Breaker**: Added `FastCircuitBreaker` to handle fault tolerance with `closed`, `open`, and `halfOpen` states.

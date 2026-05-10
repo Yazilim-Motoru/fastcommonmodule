@@ -53,13 +53,23 @@ class PlatformDeviceHelper {
     final lowerUa = ua.toLowerCase();
     final lowerPlat = platform.toLowerCase();
 
-    if (lowerUa.contains('android')) return 'android';
+    if (lowerUa.contains('android')) {
+      return 'android';
+    }
     if (lowerUa.contains('iphone') ||
         lowerUa.contains('ipad') ||
-        lowerUa.contains('ipod')) return 'ios';
-    if (lowerUa.contains('windows')) return 'windows';
-    if (lowerUa.contains('mac') || lowerPlat.contains('mac')) return 'macos';
-    if (lowerUa.contains('linux')) return 'linux';
+        lowerUa.contains('ipod')) {
+      return 'ios';
+    }
+    if (lowerUa.contains('windows')) {
+      return 'windows';
+    }
+    if (lowerUa.contains('mac') || lowerPlat.contains('mac')) {
+      return 'macos';
+    }
+    if (lowerUa.contains('linux')) {
+      return 'linux';
+    }
     return 'web';
   }
 }
