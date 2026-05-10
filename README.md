@@ -557,6 +557,11 @@ apiClient.addMiddleware(CustomAuthMiddleware('your-api-key'));
 - **FastSetting**: Model for application settings and configuration management.
 - **FastPage<T>**: Generic pagination model with items, total count, and pagination metadata.
 - **FastFilter**: Generic filtering model with query, pagination, sorting, and custom filters.
+- **FastDeviceInfo**: Cross-platform device hardware and OS information model.
+- **FastAppInfo**: Application information model (name, version, build number).
+- **FastCircuitBreakerConfig**: Configuration for circuit breaker thresholds and timeouts.
+- **FastCircuitBreakerException**: Exception thrown when the circuit breaker is open.
+- **FastLogMessage**: Structured log message model with timestamp, level, error, and stack trace.
 
 ### Cache Models
 - **FastCacheItem<T>**: Cache item model with data, expiration, access tracking and metadata.
@@ -587,6 +592,11 @@ apiClient.addMiddleware(CustomAuthMiddleware('your-api-key'));
 - **FastNotificationService**: Abstract service for sending, listing, marking as read notifications.
 - **FastSessionService**: Session management service for authentication and security.
 - **FastSettingsService**: Application settings and configuration management service.
+- **FastDeviceService**: Cross-platform device information retrieval service.
+- **FastCircuitBreaker**: Fault tolerance mechanism to prevent cascading failures.
+- **FastEventBus**: Pub-Sub event bus system for decoupled component communication.
+- **FastLocator**: Built-in lightweight dependency injection container.
+- **FastLogger**: Advanced colored console logger with global callback support.
 
 ### Cache Services
 - **BaseCacheService**: Abstract cache service interface.
@@ -621,6 +631,8 @@ apiClient.addMiddleware(CustomAuthMiddleware('your-api-key'));
 ### Enums
 - **FastFileType**: File type enumeration (image, video, audio, document, archive, other).
 - **FastNotificationType**: Notification type enumeration (info, warning, error, success).
+- **FastCircuitBreakerState**: Circuit breaker states (closed, open, halfOpen).
+- **FastLogLevel**: Logging severity levels (debug, info, warning, error, wtf).
 
 ---
 
